@@ -1,50 +1,94 @@
 workflows:
-  android-build:
-    name: BoraLer Android
+
+  # ============================================
+  # ANDROID - gera o APK (teste) e o AAB (loja)
+  # ============================================
+  android-boraler:
+    name: Boraler - Android
     max_build_duration: 60
+    instance_type: mac_mini_m2
     environment:
+      node: 20
       vars:
         PACKAGE_NAME: "com.boraler.app"
-      node: 22
-      java: 21
     scripts:
       - name: Instalar dependências
-        script: npm ci
-      - name: Sincronizar Capacitor
+        script: npm install
+
+      - name: Adicionar plataforma Android (se ainda não existir)
+        script: |
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
+
+      - name: Sincronizar arquivos com o Android
         script: npx cap sync android
-      - name: Gerar APK
+
+      - name: Gerar APK de teste (não assinado)
         script: |
           cd android
           ./gradlew assembleDebug
-    artifacts:
-      - android/app/build/outputs/apk/debug/app-debug.apk
 
-  ios-build:
-    name: BoraLer iOS
+      - name: Gerar AAB para a Play Store
+        script: |
+          cd android
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - seu-email@exemplo.com
+
+  # ============================================
+  # iOS - gera o .ipa
+  # Precisa de conta Apple Developer configurada
+  # dentro do painel do Codemagic (Teams > Code
+  # signing identities), pois o Xcode exige
+  # certificado + perfil de provisionamento.
+  # ============================================
+  ios-boraler:
+    name: Boraler - iOS
     max_build_duration: 60
+    instance_type: mac_mini_m2
     environment:
-      node: 22
-      xcode: latest
-      cocoapods: default
+      node: 20
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.boraler.app
+      vars:
+        XCODE_WORKSPACE: "App.xcworkspace"
+        XCODE_SCHEME: "App"
     scripts:
       - name: Instalar dependências
-        script: npm ci
-      - name: Sincronizar Capacitor
+        script: npm install
+
+      - name: Adicionar plataforma iOS (se ainda não existir)
+        script: |
+          if [ ! -d "ios" ]; then
+            npx cap add ios
+          fi
+
+      - name: Sincronizar arquivos com o iOS
         script: npx cap sync ios
+
       - name: Instalar CocoaPods
         script: |
           cd ios/App
           pod install
-      - name: Compilar iOS
+
+      - name: Configurar assinatura automática
+        script: xcode-project use-profiles
+
+      - name: Gerar o build (.ipa)
         script: |
-          cd ios/App
-          xcodebuild \
-            -workspace App.xcworkspace \
-            -scheme App \
-            -configuration Release \
-            -sdk iphoneos \
-            -archivePath $CM_BUILD_DIR/BoraLer.xcarchive \
-            archive \
-            CODE_SIGNING_ALLOWED=NO
+          xcode-project build-ipa \
+            --workspace "ios/App/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
-      - $CM_BUILD_DIR/BoraLer.xcarchive
+      - build/ios/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - seu-email@exemplo.com

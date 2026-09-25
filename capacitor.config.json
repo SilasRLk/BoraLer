@@ -1,5 +1,26 @@
 {
   "appId": "com.boraler.app",
-  "appName": "boraler",
-  "webDir": "www"
+  "appName": "Boraler",
+  "webDir": "www",
+  "backgroundColor": "#080808",
+  "server": {
+    "allowNavigation": [
+      "drive.google.com",
+      "docs.google.com",
+      "*.googleusercontent.com"
+    ]
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  },
+  "android": {
+    "backgroundColor": "#080808"
+  },
+  "ios": {
+    "backgroundColor": "#080808",
+    "contentInset": "always"
+  }
 }
+

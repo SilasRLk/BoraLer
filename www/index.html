@@ -2,10 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <title>Boraler</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
@@ -17,7 +15,8 @@ body{
 margin:0;
 background:#080808;
 color:#fff;
-font-family:Arial,Helvetica,sans-serif;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+-webkit-font-smoothing:antialiased;
 }
 
 button,input{
@@ -37,6 +36,8 @@ cursor:pointer;
 --border:#292929;
 --muted:#999;
 }
+
+/* LOGIN */
 
 .login{
 min-height:100vh;
@@ -60,32 +61,175 @@ box-shadow:0 20px 70px #000;
 
 .brandLogin{
 text-align:center;
-margin-bottom:28px;
+margin-bottom:22px;
+position:relative;
+padding-top:6px;
 }
 
-.logoBoraler{
-font-size:42px;
+@keyframes orb-spin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+@keyframes orb-sheen{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes orb-outerRing{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+@keyframes orb-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes orb-twinkle{0%,100%{opacity:.15}50%{opacity:.8}}
+@keyframes orb-glowPulse{
+0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(1)}
+50%{opacity:.55;transform:translate(-50%,-50%) scale(1.08)}
+}
+@keyframes orb-fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes orb-popIn{
+0%{opacity:0;transform:translateX(-50%) scale(.4)}
+70%{opacity:1;transform:translateX(-50%) scale(1.08)}
+100%{transform:translateX(-50%) scale(1)}
+}
+@keyframes orb-shimmer{0%{background-position:-120% 0}100%{background-position:220% 0}}
+
+.orb-stage{
+position:relative;
+height:190px;
+overflow:hidden;
+}
+
+.orb-glow{
+position:absolute;
+top:70px;
+left:50%;
+width:200px;
+height:200px;
+background:radial-gradient(circle,rgba(245,197,66,.35),transparent 70%);
+animation:orb-glowPulse 4s ease-in-out infinite;
+pointer-events:none;
+}
+
+.orb-star{
+position:absolute;
+border-radius:50%;
+background:#ffdd70;
+animation:orb-twinkle 2.6s ease-in-out infinite;
+}
+
+.orb-shadow{
+width:170px;
+height:60px;
+border-radius:50%;
+background:rgba(0,0,0,.35);
+margin:0 auto;
+position:relative;
+top:130px;
+}
+
+.orb-wrap{
+perspective:1000px;
+width:210px;
+height:190px;
+position:relative;
+margin:0 auto;
+}
+
+.orb-outer{
+position:absolute;
+top:2px;
+left:2px;
+width:206px;
+height:206px;
+transform-style:preserve-3d;
+transform:rotateX(58deg);
+}
+
+.orb-outer-line{
+position:absolute;
+inset:0;
+border-radius:50%;
+border:1px dashed rgba(245,197,66,.25);
+animation:orb-outerRing 22s linear infinite;
+}
+
+.orb-ring{
+position:absolute;
+top:22px;
+left:22px;
+width:166px;
+height:166px;
+transform-style:preserve-3d;
+transform:rotateX(58deg);
+}
+
+.orb-ring-line{
+position:absolute;
+inset:0;
+border-radius:50%;
+border:1px solid rgba(245,197,66,.4);
+}
+
+.orb-sat{
+position:absolute;
+top:75px;
+left:75px;
+width:22px;
+height:22px;
+border-radius:50%;
+background:#0e0e0e;
+border:1.5px solid var(--gold);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:11px;
+}
+
+.orb-coin-pos{
+position:absolute;
+top:54px;
+left:50%;
+perspective:600px;
+animation:orb-bob 3.6s ease-in-out infinite,orb-popIn 650ms cubic-bezier(.3,1.6,.4,1) 650ms both;
+}
+
+.orb-coin{
+transform-style:preserve-3d;
+width:72px;
+height:72px;
+border-radius:50%;
+background:radial-gradient(circle at 32% 26%,#fff6d9,#f5c542 42%,#b3861a 100%);
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px solid #ffe9a8;
+position:relative;
+overflow:hidden;
+animation:orb-spin 7s linear infinite;
+}
+
+.orb-coin-sheen{
+position:absolute;
+inset:-20%;
+background:conic-gradient(from 0deg,transparent 0deg,rgba(255,255,255,.5) 18deg,transparent 40deg,transparent 360deg);
+animation:orb-sheen 3.5s linear infinite;
+}
+
+.orb-coin-letter{
+position:relative;
+font-size:26px;
 font-weight:900;
-letter-spacing:-2px;
-color:var(--gold);
+color:#3a2c05;
 }
 
-.logoBoraler span{
-color:#fff;
+.orb-wordmark{
+animation:orb-fadeUp 700ms ease-out 1150ms both;
 }
 
-.logoLine{
-width:55px;
-height:4px;
-background:var(--gold);
-border-radius:20px;
-margin:8px auto;
+.orb-shimmer-text{
+background:linear-gradient(90deg,var(--gold) 0%,#fff2c4 12%,var(--gold) 24%,var(--gold) 100%);
+background-size:250% 100%;
+-webkit-background-clip:text;
+background-clip:text;
+color:transparent;
+font-size:27px;
+font-weight:900;
+letter-spacing:4px;
+display:inline-block;
+animation:orb-shimmer 2.8s ease-in-out 1150ms 1;
 }
 
-.slogan{
-color:#888;
-font-size:13px;
-}
+/* CAMPOS */
 
 .field{
 width:100%;
@@ -104,11 +248,15 @@ border-color:var(--gold);
 
 .btn{
 border:0;
-border-radius:14px;
-padding:14px;
+border-radius:100px;
+padding:14px 22px;
 font-weight:bold;
 background:var(--gold);
 color:#111;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:8px;
 }
 
 .btnDark{
@@ -143,6 +291,7 @@ z-index:20;
 background:rgba(8,8,8,.94);
 backdrop-filter:blur(14px);
 border-bottom:1px solid #222;
+padding-top:env(safe-area-inset-top);
 }
 
 .header{
@@ -205,6 +354,8 @@ transform:translateY(0);
 }
 }
 
+/* TITLES */
+
 .pageTitle{
 font-size:28px;
 margin:4px 0 5px;
@@ -215,6 +366,8 @@ color:var(--muted);
 font-size:14px;
 margin:0 0 20px;
 }
+
+/* HOME */
 
 .welcome{
 margin-bottom:18px;
@@ -297,6 +450,8 @@ color:var(--gold);
 color:#888;
 }
 
+/* CARDS */
+
 .card{
 background:var(--card);
 border:1px solid var(--border);
@@ -315,6 +470,8 @@ margin-bottom:12px;
 .cardHead h3{
 margin:0;
 }
+
+/* PROGRESS */
 
 .progress{
 height:9px;
@@ -338,6 +495,8 @@ font-size:12px;
 margin-top:7px;
 }
 
+/* SUBJECTS */
+
 .subjectGrid{
 display:grid;
 grid-template-columns:repeat(2,1fr);
@@ -347,7 +506,7 @@ gap:10px;
 .subject{
 background:var(--card);
 border:1px solid var(--border);
-border-radius:19px;
+border-radius:16px;
 padding:18px 8px;
 text-align:center;
 }
@@ -370,6 +529,8 @@ font-size:11px;
 color:#777;
 margin-top:5px;
 }
+
+/* YEARS */
 
 .yearGrid{
 display:grid;
@@ -400,6 +561,8 @@ font-weight:normal;
 opacity:.65;
 margin-top:4px;
 }
+
+/* LIBRARY */
 
 .search{
 width:100%;
@@ -469,6 +632,8 @@ font-size:12px;
 text-align:center;
 }
 
+/* TASKS */
+
 .task{
 display:flex;
 gap:12px;
@@ -502,6 +667,108 @@ text-decoration:line-through;
 opacity:.45;
 }
 
+.addTaskRow{
+display:flex;
+gap:8px;
+margin-bottom:14px;
+}
+
+.addTaskRow input{
+flex:1;
+margin:0;
+}
+
+.addTaskRow button{
+border:0;
+background:var(--gold);
+color:#111;
+border-radius:12px;
+padding:0 20px;
+font-weight:bold;
+font-size:22px;
+line-height:1;
+}
+
+.taskDelete{
+border:0;
+background:none;
+color:#777;
+font-size:19px;
+padding:2px 4px;
+line-height:1;
+align-self:flex-start;
+}
+
+.taskEmpty{
+color:#777;
+font-size:13px;
+text-align:center;
+padding:20px 0;
+}
+
+.notesArea{
+width:100%;
+min-height:130px;
+background:#181818;
+border:1px solid #303030;
+border-radius:14px;
+color:#fff;
+padding:14px;
+font-family:inherit;
+font-size:13px;
+line-height:1.5;
+resize:vertical;
+outline:none;
+box-sizing:border-box;
+}
+
+.notesSaved{
+font-size:11px;
+color:#777;
+margin-top:6px;
+text-align:right;
+min-height:14px;
+}
+
+.rankRow{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px 14px;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:14px;
+margin-bottom:8px;
+}
+
+.rankRow.rankMe{
+border-color:var(--gold);
+background:#1c1704;
+}
+
+.rankPos{
+width:26px;
+font-weight:bold;
+color:var(--gold);
+font-size:13px;
+}
+
+.rankNome{
+flex:1;
+font-size:13px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+.rankXp{
+font-size:12px;
+font-weight:bold;
+color:var(--gold);
+}
+
+/* LEVEL */
+
 .levelBox{
 text-align:center;
 padding:25px;
@@ -533,6 +800,8 @@ color:var(--gold);
 color:#888;
 }
 
+/* PROFILE */
+
 .profile{
 text-align:center;
 margin-bottom:20px;
@@ -552,6 +821,8 @@ font-weight:bold;
 margin:auto;
 }
 
+/* SETTINGS */
+
 .setting{
 display:flex;
 justify-content:space-between;
@@ -562,6 +833,8 @@ border-bottom:1px solid #252525;
 .setting:last-child{
 border:0;
 }
+
+/* HELP */
 
 .help{
 display:grid;
@@ -577,12 +850,15 @@ border-radius:14px;
 text-align:left;
 }
 
+/* BOTTOM */
+
 .bottom{
 position:fixed;
 left:0;
 right:0;
 bottom:0;
-height:76px;
+height:calc(76px + env(safe-area-inset-bottom));
+padding-bottom:env(safe-area-inset-bottom);
 display:flex;
 background:rgba(13,13,13,.97);
 border-top:1px solid #292929;
@@ -606,6 +882,8 @@ display:block;
 font-size:20px;
 margin-bottom:3px;
 }
+
+/* PDF */
 
 .pdfReader{
 display:none;
@@ -648,6 +926,66 @@ border:0;
 background:white;
 }
 
+.pdfPaginas{
+height:calc(100vh - 62px - 56px);
+overflow-y:auto;
+background:#1a1a1a;
+padding:10px 0 30px;
+box-sizing:border-box;
+-webkit-overflow-scrolling:touch;
+}
+
+.pdfNav{
+height:56px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+padding:0 14px;
+background:#111;
+border-top:1px solid #292929;
+}
+
+.pdfNav button{
+border:0;
+background:var(--gold);
+color:#111;
+border-radius:100px;
+padding:10px 16px;
+font-weight:bold;
+font-size:12px;
+white-space:nowrap;
+}
+
+.pdfNav button:disabled{
+opacity:.35;
+}
+
+.pdfNav span{
+color:#ccc;
+font-size:12px;
+white-space:nowrap;
+}
+
+.pdfPaginas canvas{
+display:block;
+margin:0 auto 10px;
+max-width:100%;
+height:auto;
+box-shadow:0 2px 10px rgba(0,0,0,.4);
+}
+
+.pdfCarregando{
+height:calc(100vh - 62px);
+display:flex;
+align-items:center;
+justify-content:center;
+color:#888;
+font-size:14px;
+}
+
+/* TOAST */
+
 .toast{
 position:fixed;
 left:50%;
@@ -662,6 +1000,8 @@ font-size:13px;
 display:none;
 z-index:10000;
 }
+
+/* MOBILE */
 
 @media(max-width:380px){
 
@@ -683,9 +1023,28 @@ font-size:18px;
 
 }
 </style>
+
+<!--
+  SDK do Supabase — usado só pelo Ranking online.
+  Carregado pelo jsdelivr, funciona offline sem erro
+  (só o ranking depende de internet pra funcionar).
+-->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!--
+  PDF.js — renderiza o PDF de verdade dentro do
+  app, sem usar a tela do Google Drive. Assim a
+  pessoa nunca é levada pra fora do Boraler.
+-->
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+
 </head>
 
 <body>
+
+<!-- ==================================================
+LOGIN
+================================================== -->
 
 <div id="login" class="login">
 
@@ -693,14 +1052,47 @@ font-size:18px;
 
 <div class="brandLogin">
 
-<div class="logoBoraler">
-BOR<span>ALER</span>
+<div class="orb-stage">
+
+<div class="orb-glow"></div>
+
+<div class="orb-star" style="top:14px;left:20%;width:3px;height:3px;animation-delay:.2s;"></div>
+<div class="orb-star" style="top:40px;left:78%;width:2px;height:2px;animation-delay:1s;"></div>
+<div class="orb-star" style="top:6px;left:60%;width:2px;height:2px;animation-delay:1.8s;"></div>
+<div class="orb-star" style="top:96px;left:10%;width:2px;height:2px;animation-delay:.6s;"></div>
+<div class="orb-star" style="top:100px;left:88%;width:3px;height:3px;animation-delay:1.4s;"></div>
+
+<div class="orb-shadow"></div>
+
+<div class="orb-wrap">
+
+<div class="orb-outer">
+<div class="orb-outer-line"></div>
 </div>
 
-<div class="logoLine"></div>
+<div id="orbRing" class="orb-ring">
+<div class="orb-ring-line"></div>
+<div id="orbSat0" class="orb-sat">📖</div>
+<div id="orbSat1" class="orb-sat">✓</div>
+<div id="orbSat2" class="orb-sat">🏆</div>
+</div>
 
+<div class="orb-coin-pos">
+<div class="orb-coin">
+<div class="orb-coin-sheen"></div>
+<span class="orb-coin-letter">B</span>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="orb-wordmark">
+<div class="orb-shimmer-text">BORALER</div>
 <div class="slogan">
 Aprenda no seu ritmo. Evolua todos os dias.
+</div>
 </div>
 
 </div>
@@ -745,6 +1137,11 @@ ENTRAR
 
 </div>
 
+
+<!-- ==================================================
+APP
+================================================== -->
+
 <div id="app" class="app">
 
 <header>
@@ -766,7 +1163,13 @@ B
 
 </header>
 
+
 <main class="page">
+
+
+<!-- ==================================================
+INÍCIO
+================================================== -->
 
 <section
 id="inicio"
@@ -787,6 +1190,7 @@ Vamos continuar seus estudos?
 
 </div>
 
+
 <div class="hero">
 
 <div class="heroTag">
@@ -794,7 +1198,7 @@ BORALER • ESTUDOS
 </div>
 
 <h2>
-🚀 Seu próximo nível começa aqui
+🚀 O próximo capítulo é seu
 </h2>
 
 <p>
@@ -818,7 +1222,7 @@ class="progressText"
 class="btn"
 onclick="pagina('biblioteca')"
 >
-📚 Livros
+📖 Livros
 </button>
 
 <button
@@ -831,6 +1235,7 @@ onclick="pagina('tarefas')"
 </div>
 
 </div>
+
 
 <div class="stats">
 
@@ -851,11 +1256,12 @@ onclick="pagina('tarefas')"
 
 </div>
 
+
 <div class="card">
 
 <div class="cardHead">
 
-<h3>🎓 Sua jornada</h3>
+<h3>🎓 Comece por aqui</h3>
 
 <span class="gold">
 Boraler
@@ -868,6 +1274,7 @@ Escolha sua série e encontre seus livros na biblioteca.
 </p>
 
 </div>
+
 
 <h2>
 📚 Matérias
@@ -924,6 +1331,11 @@ onclick="abrirMateria('Ciências')"
 
 </section>
 
+
+<!-- ==================================================
+BIBLIOTECA
+================================================== -->
+
 <section
 id="biblioteca"
 class="section"
@@ -936,6 +1348,7 @@ class="section"
 <p class="pageSub">
 Escolha sua série e encontre seus materiais.
 </p>
+
 
 <div class="yearGrid">
 
@@ -973,6 +1386,7 @@ onclick="selecionarAno(9,this)"
 
 </div>
 
+
 <div class="card">
 
 <h3 id="tituloSerie">
@@ -985,12 +1399,14 @@ Selecione uma matéria para abrir o livro.
 
 </div>
 
+
 <input
 id="pesquisa"
 class="search"
 placeholder="🔎 Pesquisar matéria..."
 oninput="pesquisar()"
 >
+
 
 <div id="listaMateriais">
 
@@ -1015,6 +1431,7 @@ data-nome="Português"
 
 </div>
 
+
 <div
 class="material"
 data-nome="Matemática"
@@ -1035,6 +1452,7 @@ data-nome="Matemática"
 <div id="pdf-matematica"></div>
 
 </div>
+
 
 <div
 class="material"
@@ -1057,6 +1475,7 @@ data-nome="História"
 
 </div>
 
+
 <div
 class="material"
 data-nome="Geografia"
@@ -1078,6 +1497,7 @@ data-nome="Geografia"
 
 </div>
 
+
 <div
 class="material"
 data-nome="Ciências"
@@ -1093,16 +1513,20 @@ data-nome="Ciências"
 <p>Livro e materiais de Ciências</p>
 </div>
 
+</div>
+
 <div id="pdf-ciencias"></div>
 
 </div>
 
 </div>
 
-</div>
-
 </section>
-<!-- TAREFAS -->
+
+
+<!-- ==================================================
+TAREFAS
+================================================== -->
 
 <section
 id="tarefas"
@@ -1117,6 +1541,7 @@ class="section"
 Complete suas atividades e ganhe XP.
 </p>
 
+
 <div class="hero">
 
 <div class="heroTag">
@@ -1124,7 +1549,7 @@ META DE HOJE
 </div>
 
 <h2>
-🎯 Continue avançando
+🎯 Faltam poucas para hoje
 </h2>
 
 <div class="progress">
@@ -1135,124 +1560,35 @@ META DE HOJE
 id="textoTarefas"
 class="progressText"
 >
-0 de 5 concluídas
+0 de 0 concluídas
 </div>
 
 </div>
 
-<div id="listaTarefas">
 
-<div class="material task">
-
+<div class="addTaskRow">
 <input
-type="checkbox"
-onchange="concluirTarefa(this)"
+id="novaTarefaInput"
+class="field"
+placeholder="Digite uma nova tarefa..."
+onkeydown="if(event.key==='Enter')adicionarTarefaNova()"
 >
+<button onclick="adicionarTarefaNova()">+</button>
+</div>
 
-<div class="taskText">
-
-<h3>
-📖 Revisar Português
-</h3>
-
-<p>
-Leia e revise o conteúdo estudado.
+<p style="color:#666;font-size:11px;margin:-8px 0 14px;">
+⏳ Uma tarefa só pode ser marcada como concluída depois de um tempinho — isso evita trapaça.
 </p>
 
-</div>
 
-</div>
-
-<div class="material task">
-
-<input
-type="checkbox"
-onchange="concluirTarefa(this)"
->
-
-<div class="taskText">
-
-<h3>
-📐 Praticar Matemática
-</h3>
-
-<p>
-Resolva alguns exercícios.
-</p>
-
-</div>
-
-</div>
-
-<div class="material task">
-
-<input
-type="checkbox"
-onchange="concluirTarefa(this)"
->
-
-<div class="taskText">
-
-<h3>
-📜 Revisar História
-</h3>
-
-<p>
-Revise os principais acontecimentos.
-</p>
-
-</div>
-
-</div>
-
-<div class="material task">
-
-<input
-type="checkbox"
-onchange="concluirTarefa(this)"
->
-
-<div class="taskText">
-
-<h3>
-🌎 Estudar Geografia
-</h3>
-
-<p>
-Leia o conteúdo da matéria.
-</p>
-
-</div>
-
-</div>
-
-<div class="material task">
-
-<input
-type="checkbox"
-onchange="concluirTarefa(this)"
->
-
-<div class="taskText">
-
-<h3>
-🔬 Revisar Ciências
-</h3>
-
-<p>
-Revise suas anotações.
-</p>
-
-</div>
-
-</div>
-
-</div>
+<div id="listaTarefas"></div>
 
 </section>
 
 
-<!-- PROGRESSO -->
+<!-- ==================================================
+PROGRESSO
+================================================== -->
 
 <section
 id="progresso"
@@ -1266,6 +1602,7 @@ class="section"
 <p class="pageSub">
 Veja o quanto você já evoluiu.
 </p>
+
 
 <div class="levelBox">
 
@@ -1291,6 +1628,7 @@ NÍVEL
 
 </div>
 
+
 <div class="stats">
 
 <div class="stat">
@@ -1310,6 +1648,69 @@ NÍVEL
 
 </div>
 
+
+<div class="card">
+
+<h3>
+🏆 Ranking
+</h3>
+
+<p style="color:#777;font-size:12px;margin-top:-4px;margin-bottom:10px;">
+Top 20 por XP. Precisa de internet pra funcionar.
+</p>
+
+<div id="rankingLista"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+🗒️ Anotações
+</h3>
+
+<p style="color:#777;font-size:12px;margin-top:-4px;margin-bottom:10px;">
+Escreva o que quiser. Fica salvo neste aparelho.
+</p>
+
+<textarea
+id="anotacoesArea"
+class="notesArea"
+placeholder="Ex: revisar capítulo 3 de História, levar dúvida de Matemática pra próxima aula..."
+oninput="salvarAnotacoes()"
+></textarea>
+
+<div id="anotacoesSalvo" class="notesSaved"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+📝 Minhas tarefas
+</h3>
+
+<div class="addTaskRow">
+<input
+id="novaTarefaInputProgresso"
+class="field"
+placeholder="Digite uma nova tarefa..."
+onkeydown="if(event.key==='Enter')adicionarTarefaNova('progresso')"
+>
+<button onclick="adicionarTarefaNova('progresso')">+</button>
+</div>
+
+<p style="color:#666;font-size:11px;margin:-8px 0 14px;">
+⏳ Uma tarefa só pode ser marcada como concluída depois de um tempinho — isso evita trapaça.
+</p>
+
+<div id="listaTarefasProgresso"></div>
+
+</div>
+
+
 <div class="card">
 
 <h3>
@@ -1321,7 +1722,7 @@ NÍVEL
 </p>
 
 <p>
-📚 Estudante
+🎓 Estudante
 </p>
 
 <p>
@@ -1333,7 +1734,9 @@ NÍVEL
 </section>
 
 
-<!-- PERFIL -->
+<!-- ==================================================
+PERFIL
+================================================== -->
 
 <section
 id="perfil"
@@ -1347,6 +1750,7 @@ class="section"
 <p class="pageSub">
 Suas informações no Boraler.
 </p>
+
 
 <div class="profile">
 
@@ -1368,6 +1772,7 @@ class="muted"
 </p>
 
 </div>
+
 
 <div class="card">
 
@@ -1392,6 +1797,7 @@ class="muted"
 
 </div>
 
+
 <div class="card">
 
 <h3>
@@ -1415,6 +1821,7 @@ class="muted"
 
 </div>
 
+
 <button
 class="btn btnDark full"
 onclick="sair()"
@@ -1425,7 +1832,9 @@ onclick="sair()"
 </section>
 
 
-<!-- AJUDA -->
+<!-- ==================================================
+AJUDA
+================================================== -->
 
 <section
 id="ajuda"
@@ -1439,6 +1848,7 @@ class="section"
 <p class="pageSub">
 Veja como usar o Boraler.
 </p>
+
 
 <div class="help">
 
@@ -1468,6 +1878,7 @@ onclick="mostrarAjuda('xp')"
 
 </div>
 
+
 <div
 id="respostaAjuda"
 class="card"
@@ -1480,7 +1891,9 @@ style="display:none;margin-top:14px"
 </main>
 
 
-<!-- MENU -->
+<!-- ==================================================
+MENU
+================================================== -->
 
 <nav class="bottom">
 
@@ -1525,7 +1938,9 @@ Perfil
 </div>
 
 
-<!-- LEITOR DE PDF -->
+<!-- ==================================================
+LEITOR DE PDF
+================================================== -->
 
 <div
 id="pdfReader"
@@ -1550,10 +1965,47 @@ Livro
 
 </div>
 
+<div
+id="pdfCarregando"
+class="pdfCarregando"
+>
+Carregando PDF...
+</div>
+
+<div
+id="pdfPaginas"
+class="pdfPaginas"
+></div>
+
+<div
+id="pdfNav"
+class="pdfNav"
+style="display:none;"
+>
+
+<button
+onclick="paginaAnteriorPDF()"
+>
+← Anterior
+</button>
+
+<span id="pdfNavTexto">
+Página 1 de 1
+</span>
+
+<button
+onclick="proximaPaginaPDF()"
+>
+Próxima →
+</button>
+
+</div>
+
 <iframe
 id="pdfFrame"
 class="pdfFrame"
 src=""
+style="display:none;"
 >
 </iframe>
 
@@ -1570,65 +2022,169 @@ class="toast"
 <script>
 
 /* ==================================================
-SUPABASE
+PDF.js — configuração do worker
 ================================================== */
 
-const SUPABASE_URL =
-"https://peikwlepjkdulcjezlhm.supabase.co";
+if(typeof pdfjsLib!=="undefined"){
 
-const SUPABASE_PUBLISHABLE_KEY =
-"sb_publishable_WQtdNYXA9VlFEtyryuNd3A_z2N8sdcq";
+pdfjsLib.GlobalWorkerOptions.workerSrc=
+"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
 
-const supabaseClient =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY,
-{
-auth:{
-persistSession:true,
-autoRefreshToken:true,
-detectSessionInUrl:true
 }
-}
-);
 
 
 /* ==================================================
-PDFS DOS LIVROS
+CONFIGURAÇÃO
 ================================================== */
+
+/*
+   BANCO DE DADOS
+
+   COLOQUE A URL DA SUA API AQUI QUANDO TIVER.
+
+   Exemplo:
+
+   DATABASE_URL:
+   "https://seusite.com/api"
+
+   Por enquanto o cadastro funciona
+   usando o armazenamento do aparelho.
+*/
+
+const DATABASE_URL =
+"COLOQUE_A_URL_DO_SEU_BANCO_AQUI";
+
+
+/*
+   RANKING ONLINE (Supabase)
+
+   Pra comparar XP com outras pessoas
+   de verdade, você precisa de um
+   banco de dados gratuito no Supabase.
+
+   Veja o passo a passo completo aqui:
+   https://supabase.com
+
+   Depois de criar o projeto e a
+   tabela "ranking", cole a URL e a
+   chave "anon public" abaixo.
+
+   Enquanto não colocar, o ranking
+   fica desativado (sem quebrar o
+   resto do app).
+*/
+
+const SUPABASE_URL=
+"https://pqaxquuntznczspsqunn.supabase.co";
+
+const SUPABASE_ANON_KEY=
+"sb_publishable_OOKJ13CfY6Cg4W_1VzLqMA_a22Ro9cB";
+
+
+/* ==================================================
+ANIMAÇÃO DE ENTRADA (ÓRBITA DO LOGIN)
+================================================== */
+
+(function(){
+
+const satelites=[
+document.getElementById("orbSat0"),
+document.getElementById("orbSat1"),
+document.getElementById("orbSat2")
+];
+
+const raioMax=77;
+let inicio=null;
+
+function loginVisivel(){
+const login=document.getElementById("login");
+return login && login.style.display!=="none";
+}
+
+function quadro(ts){
+
+if(loginVisivel()){
+
+if(!inicio)inicio=ts;
+
+const passado=ts-inicio;
+const crescimento=Math.min(1,passado/900);
+const raio=raioMax*(1-Math.pow(1-crescimento,3));
+
+for(let i=0;i<3;i++){
+
+const fase=i*(Math.PI*2/3);
+const angulo=passado*0.0011+fase;
+
+const x=Math.cos(angulo)*raio;
+const y=Math.sin(angulo)*raio;
+const escala=0.75+((Math.sin(angulo)+1)/2)*0.35;
+
+satelites[i].style.transform=
+"translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0) scale("+escala.toFixed(2)+")";
+
+satelites[i].style.opacity=
+(0.65+escala*0.35).toFixed(2);
+
+}
+
+}else{
+
+inicio=null;
+
+}
+
+requestAnimationFrame(quadro);
+
+}
+
+requestAnimationFrame(quadro);
+
+})();
+
+
+/* ==================================================
+LINKS DOS PDFS
+==================================================
+
+   Aqui você coloca os links.
+
+   Cada série possui suas próprias matérias.
+
+*/
 
 const LIVROS = {
 
 6:{
-Portugues:"COLE_AQUI_O_PDF",
-Matematica:"COLE_AQUI_O_PDF",
-Historia:"COLE_AQUI_O_PDF",
-Geografia:"https://drive.google.com/file/d/13R9dkZ98DGERnlVsnERdaNgVdbSo1P8d/view?usp=drivesdk",
-Ciencias:"COLE_AQUI_O_PDF"
+Português:"https://drive.google.com/file/d/1bSHx4-gqUHr9MHP41puGXfv_UjFYiS1E/preview",
+Matemática:"https://drive.google.com/file/d/1NbYMqivMDNG2acD9M6qKHat5UiqP8zXy/preview",
+História:"https://drive.google.com/file/d/1rcmGWTnOtwx3g3mAVZeWY_riBLSmj5eb/preview",
+Geografia:"https://drive.google.com/file/d/1wtBS22H068vW1VHNB1ZHhC4fuSkinsPc/preview",
+Ciências:"https://drive.google.com/file/d/10djDqDdD0lJvbRj2OsSFT7l4cY0-EDN0/preview"
 },
 
 7:{
-Portugues:"COLE_AQUI_O_PDF",
-Matematica:"COLE_AQUI_O_PDF",
-Historia:"COLE_AQUI_O_PDF",
-Geografia:"COLE_AQUI_O_PDF",
-Ciencias:"COLE_AQUI_O_PDF"
+Português:"https://drive.google.com/file/d/1CJl_tuqJPBPmCsTzfwB2f1PO4qDTpbvH/preview",
+Matemática:"https://drive.google.com/file/d/1x9VdtQ_FL185aMOY6liiEWpuFQJ4eYy7/preview",
+História:"https://drive.google.com/file/d/1w06riCjpZBos5BAszYir2Ft4kGgMUy7m/preview",
+Geografia:"https://drive.google.com/file/d/1Jl5TgsXsD5Yt_6EBoWDsGIgId6PzDX8a/preview",
+Ciências:"https://drive.google.com/file/d/1HMPsMwhkfUMhnkr3t--1tPKEvtdnee24/preview"
 },
 
 8:{
-Portugues:"COLE_AQUI_O_PDF",
-Matematica:"COLE_AQUI_O_PDF",
-Historia:"COLE_AQUI_O_PDF",
-Geografia:"COLE_AQUI_O_PDF",
-Ciencias:"COLE_AQUI_O_PDF"
+Português:"https://drive.google.com/file/d/1y_x9alWfk58IgqgBmCacnP6yWWPgjfdl/preview",
+Matemática:"https://drive.google.com/file/d/135P_nJqj4kyBeIKsQUz1xhQM8Towrf9_/preview",
+História:"https://drive.google.com/file/d/1cp5DGDlto2kZAryy7wHezgx09zo61eWJ/preview",
+Geografia:"https://drive.google.com/file/d/1XK6J0Mxd05kSYkP91l2YoDtRNmoYyipl/preview",
+Ciências:"https://drive.google.com/file/d/1NOlhtHjb9_Uba6w6izoSJM87TD2E02mG/preview"
 },
 
 9:{
-Portugues:"COLE_AQUI_O_PDF",
-Matematica:"COLE_AQUI_O_PDF",
-Historia:"COLE_AQUI_O_PDF",
-Geografia:"COLE_AQUI_O_PDF",
-Ciencias:"COLE_AQUI_O_PDF"
+Português:"https://drive.google.com/file/d/1d2YQmulndzsSRLhFPmo7ThjgOV7g7qmJ/preview",
+Matemática:"https://drive.google.com/file/d/1B08HuW8zGN0Y6v9SR8l7H_6jTsiRlgun/preview",
+História:"https://drive.google.com/file/d/14H7wpcg1Em2NvzUaFrdeuNKtFLXpRJpk/preview",
+Geografia:"https://drive.google.com/file/d/1-f3b-XGvRYmcZ7oQgIiV1fAr76QNf2LE/preview",
+Ciências:"https://drive.google.com/file/d/1PBVjFkma4vFvucUyRn4Aj7R-oc75pkzO/preview"
 }
 
 };
@@ -1638,33 +2194,14 @@ Ciencias:"COLE_AQUI_O_PDF"
 DADOS
 ================================================== */
 
-const TOTAL_TAREFAS=5;
-
 let anoAtual=6;
 
 
 /* ==================================================
-MENSAGEM
+CADASTRO
 ================================================== */
 
-function mostrarMensagem(texto,erro=true){
-
-const msg=
-document.getElementById("msg");
-
-msg.innerText=texto;
-
-msg.style.color=
-erro ? "#ff7777" : "#7dff9b";
-
-}
-
-
-/* ==================================================
-CADASTRO SUPABASE
-================================================== */
-
-async function cadastrar(){
+function cadastrar(){
 
 const nome=
 document.getElementById("nomeCadastro")
@@ -1681,61 +2218,22 @@ document.getElementById("senha")
 
 if(nome===""||email===""||senha===""){
 
-mostrarMensagem(
-"Preencha todos os campos."
-);
-
-return;
-
-}
-
-if(senha.length<6){
-
-mostrarMensagem(
-"A senha precisa ter pelo menos 6 caracteres."
-);
+document.getElementById("msg")
+.innerText=
+"Preencha todos os campos.";
 
 return;
 
 }
 
 
-mostrarMensagem(
-"Criando sua conta...",
-false
-);
+/*
+   SALVA NO APARELHO
 
-
-try{
-
-const {data,error}=
-await supabaseClient.auth.signUp({
-
-email:email,
-
-password:senha,
-
-options:{
-data:{
-nome:nome
-}
-}
-
-});
-
-
-if(error){
-
-mostrarMensagem(
-error.message
-);
-
-return;
-
-}
-
-
-if(data.user){
+   Isso permite que o cadastro
+   continue existindo mesmo fechando
+   o aplicativo.
+*/
 
 localStorage.setItem(
 "boraler_nome",
@@ -1747,45 +2245,67 @@ localStorage.setItem(
 email
 );
 
-
-if(data.session){
-
-mostrarMensagem(
-"Conta criada com sucesso!",
-false
+localStorage.setItem(
+"boraler_senha",
+senha
 );
 
-abrirAppComUsuario(data.user);
-
-}else{
-
-mostrarMensagem(
-"Conta criada! Verifique seu e-mail para confirmar a conta.",
-false
+localStorage.setItem(
+"boraler_logado",
+"sim"
 );
+
+
+/*
+   FUTURO BANCO
+
+   Quando você colocar uma API,
+   poderá enviar os dados para ela.
+*/
+
+if(
+DATABASE_URL!=="COLOQUE_A_URL_DO_SEU_BANCO_AQUI"
+){
+
+fetch(
+DATABASE_URL+"/cadastro",
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+nome:nome,
+email:email,
+senha:senha
+})
+
+}
+).catch(function(){
+
+console.log(
+"Não foi possível conectar ao banco."
+);
+
+});
 
 }
 
-}
 
-}catch(erro){
-
-console.error(erro);
-
-mostrarMensagem(
-"Não foi possível criar a conta."
-);
-
-}
+abrirApp();
 
 }
 
 
 /* ==================================================
-LOGIN SUPABASE
+LOGIN
 ================================================== */
 
-async function entrar(){
+function entrar(){
 
 const email=
 document.getElementById("email")
@@ -1796,59 +2316,34 @@ document.getElementById("senha")
 .value;
 
 
-if(email===""||senha===""){
-
-mostrarMensagem(
-"Digite seu e-mail e sua senha."
+const emailSalvo=
+localStorage.getItem(
+"boraler_email"
 );
 
-return;
-
-}
-
-
-mostrarMensagem(
-"Entrando...",
-false
+const senhaSalva=
+localStorage.getItem(
+"boraler_senha"
 );
 
 
-try{
+if(
+email===emailSalvo &&
+senha===senhaSalva
+){
 
-const {data,error}=
-await supabaseClient.auth.signInWithPassword({
-
-email:email,
-
-password:senha
-
-});
-
-
-if(error){
-
-mostrarMensagem(
-"Não foi possível entrar. Verifique o e-mail e a senha."
+localStorage.setItem(
+"boraler_logado",
+"sim"
 );
 
-return;
+abrirApp();
 
-}
+}else{
 
-
-if(data.user){
-
-abrirAppComUsuario(data.user);
-
-}
-
-}catch(erro){
-
-console.error(erro);
-
-mostrarMensagem(
-"Erro ao tentar entrar."
-);
+document.getElementById("msg")
+.innerText=
+"E-mail ou senha incorretos.";
 
 }
 
@@ -1856,72 +2351,27 @@ mostrarMensagem(
 
 
 /* ==================================================
-CARREGAR USUÁRIO
+ABRIR APP
 ================================================== */
 
-async function carregarUsuario(){
-
-try{
-
-const {data,error}=
-await supabaseClient.auth.getUser();
-
-if(error){
-
-console.log(error);
-
-return;
-
-}
-
-if(data.user){
-
-abrirAppComUsuario(data.user);
-
-}
-
-}catch(erro){
-
-console.error(erro);
-
-}
-
-}
-
-
-/* ==================================================
-ABRIR APP COM USUÁRIO
-================================================== */
-
-function abrirAppComUsuario(user){
-
-const nome=
-user.user_metadata?.nome ||
-localStorage.getItem("boraler_nome") ||
-"Estudante";
-
-const email=
-user.email ||
-localStorage.getItem("boraler_email") ||
-"";
-
-
-localStorage.setItem(
-"boraler_nome",
-nome
-);
-
-localStorage.setItem(
-"boraler_email",
-email
-);
-
+function abrirApp(){
 
 document.getElementById("login")
 .style.display="none";
 
 document.getElementById("app")
 .style.display="block";
+
+
+const nome=
+localStorage.getItem(
+"boraler_nome"
+)||"Estudante";
+
+const email=
+localStorage.getItem(
+"boraler_email"
+)||"";
 
 
 const letra=
@@ -1956,7 +2406,17 @@ document.getElementById(
 
 atualizar();
 
+renderizarTarefas();
+
+carregarAnotacoes();
+
 carregarLivros();
+
+pedirPermissaoNotificacao();
+
+agendarLembrete();
+
+enviarRankingOnline();
 
 }
 
@@ -1965,27 +2425,11 @@ carregarLivros();
 SAIR
 ================================================== */
 
-async function sair(){
-
-try{
-
-await supabaseClient.auth.signOut();
-
-}catch(erro){
-
-console.error(erro);
-
-}
-
+function sair(){
 
 localStorage.removeItem(
-"boraler_nome"
+"boraler_logado"
 );
-
-localStorage.removeItem(
-"boraler_email"
-);
-
 
 document.getElementById("app")
 .style.display="none";
@@ -1994,17 +2438,16 @@ document.getElementById("login")
 .style.display="flex";
 
 
-document.getElementById("nomeCadastro")
-.value="";
+const LN=
+pluginNotificacao();
 
-document.getElementById("email")
-.value="";
+if(LN){
 
-document.getElementById("senha")
-.value="";
+LN.cancel({
+notifications:[{id:1}]
+}).catch(function(){});
 
-
-mostrarMensagem("");
+}
 
 }
 
@@ -2030,6 +2473,13 @@ document.getElementById(nome);
 if(destino){
 
 destino.classList.add("active");
+
+}
+
+
+if(nome==="progresso"){
+
+carregarRankingOnline();
 
 }
 
@@ -2095,7 +2545,7 @@ botao.classList.add("active");
 
 document.getElementById(
 "tituloSerie"
-).innerText=
+).innerHTML=
 "📚 Materiais do "+ano+"º ano";
 
 
@@ -2126,15 +2576,6 @@ const materias=[
 ];
 
 
-const chaves=[
-"Portugues",
-"Matematica",
-"Historia",
-"Geografia",
-"Ciencias"
-];
-
-
 const ids=[
 "pdf-portugues",
 "pdf-matematica",
@@ -2148,8 +2589,6 @@ for(let i=0;i<materias.length;i++){
 
 const materia=materias[i];
 
-const chave=chaves[i];
-
 const id=ids[i];
 
 const area=
@@ -2159,24 +2598,17 @@ if(!area)continue;
 
 
 const link=
-LIVROS[anoAtual][chave];
+LIVROS[anoAtual][materia];
 
 
-if(
-link &&
-link!=="COLE_AQUI_O_PDF"
-){
-
-const linkSeguro=
-encodeURIComponent(link);
-
+if(link){
 
 area.innerHTML=
 `
 <a
 class="pdfBtn"
 href="#"
-onclick="abrirPDFPorLink('${linkSeguro}','${materia}')"
+onclick="abrirPDF('${link.replace(/'/g,"\\'")}','${materia}')"
 >
 📖 Abrir livro do ${anoAtual}º ano
 </a>
@@ -2194,20 +2626,6 @@ area.innerHTML=
 }
 
 }
-
-}
-
-
-/* ==================================================
-ABRIR PDF PELO LINK
-================================================== */
-
-function abrirPDFPorLink(linkCodificado,materia){
-
-const link=
-decodeURIComponent(linkCodificado);
-
-abrirPDF(link,materia);
 
 }
 
@@ -2247,16 +2665,44 @@ item.style.display="none";
 });
 
 }
+
+
 /* ==================================================
-ABRIR PDF
+ABRIR PDF DENTRO DO APP
 ================================================== */
 
-function abrirPDF(link,materia){
+function idDoLinkDrive(link){
 
-if(
-!link ||
-link==="COLE_AQUI_O_PDF"
-){
+const m=
+link.match(
+/\/d\/([a-zA-Z0-9_-]+)/
+);
+
+return m?m[1]:null;
+
+}
+
+
+/*
+   Guardamos o documento PDF já aberto
+   e a página atual aqui fora, pra dar
+   pra navegar sem reabrir o arquivo.
+
+   Renderizamos UMA página por vez —
+   isso evita travar o celular com
+   livros grandes (antes gerava todas
+   as páginas de uma vez, o que pesava
+   demais em aparelhos mais fracos).
+*/
+
+let _pdfDocumentoAtual=null;
+
+let _pdfPaginaAtual=1;
+
+
+async function abrirPDF(link,materia){
+
+if(!link){
 
 mostrarToast(
 "PDF não cadastrado."
@@ -2267,60 +2713,252 @@ return;
 }
 
 
-if(
-link.includes("drive.google.com/file/d/")
-){
-
-const partes=
-link.split("/file/d/");
-
-if(partes.length>1){
-
-const id=
-partes[1].split("/")[0];
-
-link=
-"https://drive.google.com/file/d/"
-+id+
-"/preview";
-
-}
-
-}
-
-else if(
-link.includes("drive.google.com/open?id=")
-){
-
-const id=
-link.split("open?id=")[1]
-.split("&")[0];
-
-link=
-"https://drive.google.com/file/d/"
-+id+
-"/preview";
-
-}
-
-
 document.getElementById(
 "pdfTitle"
-).innerText=
+).innerHTML=
 "📖 "+materia+" • "+anoAtual+"º ano";
-
-
-document.getElementById(
-"pdfFrame"
-).src=link;
 
 
 document.getElementById(
 "pdfReader"
 ).style.display="block";
 
-
 document.body.style.overflow="hidden";
+
+
+const areaPaginas=
+document.getElementById("pdfPaginas");
+
+const carregando=
+document.getElementById("pdfCarregando");
+
+const frame=
+document.getElementById("pdfFrame");
+
+const nav=
+document.getElementById("pdfNav");
+
+areaPaginas.innerHTML="";
+
+areaPaginas.style.display="none";
+
+nav.style.display="none";
+
+frame.style.display="none";
+
+frame.src="";
+
+carregando.style.display="flex";
+
+carregando.innerText=
+"Carregando PDF...";
+
+
+_pdfDocumentoAtual=null;
+
+_pdfPaginaAtual=1;
+
+
+const idDrive=
+idDoLinkDrive(link);
+
+
+/*
+   Plano B: se o PDF.js falhar por
+   qualquer motivo (sem internet, link
+   inválido, etc.), mostramos o link
+   dentro do iframe como antes, em vez
+   de deixar a tela em branco.
+*/
+
+function usarPlanoB(linkFallback){
+
+carregando.style.display="none";
+
+frame.style.display="block";
+
+frame.src=linkFallback;
+
+}
+
+
+if(!idDrive){
+
+usarPlanoB(link);
+
+return;
+
+}
+
+
+try{
+
+const urlDireta=
+"https://drive.google.com/uc?export=download&id="+
+idDrive;
+
+const resposta=
+await fetch(urlDireta);
+
+if(!resposta.ok){
+
+throw new Error(
+"Falha ao baixar o PDF"
+);
+
+}
+
+const bytes=
+await resposta.arrayBuffer();
+
+const documento=
+await pdfjsLib.getDocument({
+data:bytes
+}).promise;
+
+_pdfDocumentoAtual=documento;
+
+_pdfPaginaAtual=1;
+
+carregando.style.display="none";
+
+areaPaginas.style.display="block";
+
+nav.style.display=
+documento.numPages>1?
+"flex":"none";
+
+await renderizarPaginaPDF();
+
+
+}catch(e){
+
+console.log(
+"PDF.js falhou, usando plano B:",e
+);
+
+usarPlanoB(
+"https://drive.google.com/file/d/"+
+idDrive+
+"/preview"
+);
+
+}
+
+}
+
+
+async function renderizarPaginaPDF(){
+
+if(!_pdfDocumentoAtual){
+
+return;
+
+}
+
+const areaPaginas=
+document.getElementById("pdfPaginas");
+
+areaPaginas.innerHTML="";
+
+areaPaginas.scrollTop=0;
+
+
+const pagina=
+await _pdfDocumentoAtual.getPage(
+_pdfPaginaAtual
+);
+
+const larguraDisponivel=
+areaPaginas.clientWidth-20;
+
+const dpr=
+window.devicePixelRatio||1;
+
+const viewportBase=
+pagina.getViewport({scale:1});
+
+const escala=
+larguraDisponivel/viewportBase.width;
+
+const viewport=
+pagina.getViewport({
+scale:escala*dpr
+});
+
+const canvas=
+document.createElement("canvas");
+
+canvas.width=
+viewport.width;
+
+canvas.height=
+viewport.height;
+
+canvas.style.width=
+(viewport.width/dpr)+"px";
+
+canvas.style.height=
+(viewport.height/dpr)+"px";
+
+areaPaginas.appendChild(canvas);
+
+await pagina.render({
+canvasContext:
+canvas.getContext("2d"),
+viewport:viewport
+}).promise;
+
+
+document.getElementById(
+"pdfNavTexto"
+).innerText=
+"Página "+
+_pdfPaginaAtual+
+" de "+
+_pdfDocumentoAtual.numPages;
+
+
+const botoes=
+document.querySelectorAll(
+"#pdfNav button"
+);
+
+botoes[0].disabled=
+_pdfPaginaAtual<=1;
+
+botoes[1].disabled=
+_pdfPaginaAtual>=
+_pdfDocumentoAtual.numPages;
+
+}
+
+
+function paginaAnteriorPDF(){
+
+if(_pdfPaginaAtual>1){
+
+_pdfPaginaAtual--;
+
+renderizarPaginaPDF();
+
+}
+
+}
+
+
+function proximaPaginaPDF(){
+
+if(
+_pdfDocumentoAtual&&
+_pdfPaginaAtual<_pdfDocumentoAtual.numPages
+){
+
+_pdfPaginaAtual++;
+
+renderizarPaginaPDF();
+
+}
 
 }
 
@@ -2335,6 +2973,9 @@ document.getElementById(
 "pdfFrame"
 ).src="";
 
+document.getElementById(
+"pdfPaginas"
+).innerHTML="";
 
 document.getElementById(
 "pdfReader"
@@ -2347,61 +2988,680 @@ document.body.style.overflow="";
 
 
 /* ==================================================
-CONCLUIR TAREFA
+TAREFAS (lista dinâmica, criada pela pessoa)
 ================================================== */
 
-function concluirTarefa(caixa){
+/*
+   ANTI-TRAPAÇA
 
-let tarefas=
-Number(
-localStorage.getItem(
-"boraler_tarefas"
-)||0
-);
+   A pessoa só consegue marcar uma
+   tarefa como concluída depois de
+   esperar esse tempo mínimo desde
+   que a criou. Evita criar e marcar
+   como feita na mesma hora só pra
+   ganhar XP.
+
+   Para mudar, troque o número
+   abaixo (em minutos).
+*/
+
+const MINUTOS_ANTES_DE_CONCLUIR=1;
 
 
-if(caixa.checked){
+function carregarListaTarefas(){
 
-if(tarefas<TOTAL_TAREFAS){
+try{
 
-tarefas++;
+return JSON.parse(
+localStorage.getItem("boraler_lista_tarefas")
+)||[];
+
+}catch(e){
+
+return [];
+
+}
 
 }
 
 
-caixa.parentElement
-.querySelector(".taskText")
-.classList.add("done");
+function salvarListaTarefas(lista){
 
+localStorage.setItem(
+"boraler_lista_tarefas",
+JSON.stringify(lista)
+);
+
+}
+
+
+function adicionarTarefaNova(origem){
+
+const idInput=
+origem==="progresso"?
+"novaTarefaInputProgresso":
+"novaTarefaInput";
+
+const input=
+document.getElementById(idInput);
+
+const texto=
+input.value.trim();
+
+if(!texto){
+
+return;
+
+}
+
+const lista=
+carregarListaTarefas();
+
+lista.push({
+id:Date.now(),
+texto:texto,
+feita:false,
+criadoEm:Date.now()
+});
+
+salvarListaTarefas(lista);
+
+input.value="";
+
+renderizarTarefas();
+
+atualizar();
+
+}
+
+
+function alternarTarefa(id){
+
+const lista=
+carregarListaTarefas();
+
+const item=
+lista.find(function(t){
+return t.id===id;
+});
+
+if(!item){
+
+return;
+
+}
+
+
+const vaiConcluir=
+!item.feita;
+
+if(vaiConcluir){
+
+const criadoEm=
+item.criadoEm||0;
+
+const passouMs=
+Date.now()-criadoEm;
+
+const minimoMs=
+MINUTOS_ANTES_DE_CONCLUIR*60*1000;
+
+if(passouMs<minimoMs){
+
+mostrarToast(
+"⏳ Espere um pouco antes de marcar como concluída"
+);
+
+renderizarTarefas();
+
+return;
+
+}
+
+}
+
+
+item.feita=!item.feita;
+
+salvarListaTarefas(lista);
+
+
+if(item.feita){
 
 mostrarToast(
 "✓ Tarefa concluída • +20 XP"
 );
 
+agendarLembrete();
 
-}else{
-
-if(tarefas>0){
-
-tarefas--;
+enviarRankingOnline();
 
 }
 
 
-caixa.parentElement
-.querySelector(".taskText")
-.classList.remove("done");
+renderizarTarefas();
+
+atualizar();
 
 }
 
+
+function removerTarefa(id){
+
+const lista=
+carregarListaTarefas()
+.filter(function(t){
+return t.id!==id;
+});
+
+salvarListaTarefas(lista);
+
+renderizarTarefas();
+
+atualizar();
+
+}
+
+
+function criarLinhaTarefa(item){
+
+const linha=
+document.createElement("div");
+
+linha.className=
+"material task";
+
+const caixa=
+document.createElement("input");
+
+caixa.type="checkbox";
+
+caixa.checked=
+item.feita;
+
+caixa.onchange=function(){
+
+alternarTarefa(item.id);
+
+};
+
+const texto=
+document.createElement("div");
+
+texto.className=
+"taskText"+
+(item.feita?" done":"");
+
+const tituloTarefa=
+document.createElement("h3");
+
+tituloTarefa.textContent=
+item.texto;
+
+texto.appendChild(
+tituloTarefa
+);
+
+const excluir=
+document.createElement("button");
+
+excluir.className=
+"taskDelete";
+
+excluir.innerHTML=
+"✕";
+
+excluir.onclick=function(){
+
+removerTarefa(item.id);
+
+};
+
+linha.appendChild(caixa);
+
+linha.appendChild(texto);
+
+linha.appendChild(excluir);
+
+return linha;
+
+}
+
+
+function renderizarTarefas(){
+
+const lista=
+carregarListaTarefas();
+
+[
+"listaTarefas",
+"listaTarefasProgresso"
+].forEach(function(idContainer){
+
+const container=
+document.getElementById(idContainer);
+
+if(!container){
+
+return;
+
+}
+
+container.innerHTML="";
+
+if(lista.length===0){
+
+const vazio=
+document.createElement("div");
+
+vazio.className=
+"taskEmpty";
+
+vazio.innerText=
+"Nenhuma tarefa ainda. Adicione a primeira acima!";
+
+container.appendChild(vazio);
+
+return;
+
+}
+
+lista.forEach(function(item){
+
+container.appendChild(
+criarLinhaTarefa(item)
+);
+
+});
+
+});
+
+}
+
+
+/* ==================================================
+ANOTAÇÕES (Progresso)
+================================================== */
+
+function carregarAnotacoes(){
+
+const area=
+document.getElementById("anotacoesArea");
+
+if(!area){
+
+return;
+
+}
+
+area.value=
+localStorage.getItem("boraler_anotacoes")||"";
+
+}
+
+
+let _anotacoesTimeout=null;
+
+function salvarAnotacoes(){
+
+const area=
+document.getElementById("anotacoesArea");
 
 localStorage.setItem(
-"boraler_tarefas",
-tarefas
+"boraler_anotacoes",
+area.value
 );
 
 
-atualizar();
+const aviso=
+document.getElementById("anotacoesSalvo");
+
+if(_anotacoesTimeout){
+
+clearTimeout(_anotacoesTimeout);
+
+}
+
+aviso.innerText=
+"Salvo ✓";
+
+_anotacoesTimeout=
+setTimeout(function(){
+
+aviso.innerText="";
+
+},1500);
+
+}
+
+
+/* ==================================================
+LEMBRETE (notificação local)
+
+   Avisa a pessoa depois de X horas
+   sem concluir nenhuma tarefa.
+
+   Para mudar o tempo, troque o
+   número abaixo (em horas).
+================================================== */
+
+const HORAS_LEMBRETE=24;
+
+
+function pluginNotificacao(){
+
+if(
+typeof Capacitor!=="undefined"&&
+Capacitor.isNativePlatform&&
+Capacitor.isNativePlatform()&&
+Capacitor.Plugins&&
+Capacitor.Plugins.LocalNotifications
+){
+
+return Capacitor.Plugins.LocalNotifications;
+
+}
+
+return null;
+
+}
+
+
+async function pedirPermissaoNotificacao(){
+
+const LN=
+pluginNotificacao();
+
+if(!LN){
+
+return;
+
+}
+
+try{
+
+await LN.requestPermissions();
+
+}catch(e){
+
+console.log(
+"Permissão de notificação:",e
+);
+
+}
+
+}
+
+
+async function agendarLembrete(){
+
+const LN=
+pluginNotificacao();
+
+if(!LN){
+
+return;
+
+}
+
+try{
+
+await LN.cancel({
+notifications:[{id:1}]
+});
+
+const disparoEm=
+new Date(
+Date.now()+
+HORAS_LEMBRETE*60*60*1000
+);
+
+await LN.schedule({
+notifications:[{
+id:1,
+title:"Hora de estudar! 📚",
+body:"Você ainda não concluiu nenhuma tarefa. Que tal fazer uma agora?",
+schedule:{at:disparoEm}
+}]
+});
+
+}catch(e){
+
+console.log(
+"Erro ao agendar lembrete:",e
+);
+
+}
+
+}
+
+
+/* ==================================================
+RANKING ONLINE (Supabase)
+================================================== */
+
+function supabaseConfigurado(){
+
+return (
+SUPABASE_URL.indexOf("COLOQUE_")!==0&&
+SUPABASE_ANON_KEY.indexOf("COLOQUE_")!==0&&
+typeof supabase!=="undefined"
+);
+
+}
+
+
+let _clienteSupabase=null;
+
+function clienteSupabase(){
+
+if(!supabaseConfigurado()){
+
+return null;
+
+}
+
+if(!_clienteSupabase){
+
+_clienteSupabase=
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+}
+
+return _clienteSupabase;
+
+}
+
+
+function idDispositivo(){
+
+let id=
+localStorage.getItem(
+"boraler_device_id"
+);
+
+if(!id){
+
+id=
+(crypto.randomUUID?
+crypto.randomUUID():
+"id-"+Date.now()+"-"+
+Math.random().toString(36).slice(2));
+
+localStorage.setItem(
+"boraler_device_id",
+id
+);
+
+}
+
+return id;
+
+}
+
+
+async function enviarRankingOnline(){
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+return;
+
+}
+
+const lista=
+carregarListaTarefas();
+
+const xp=
+lista.filter(function(t){
+return t.feita;
+}).length*20;
+
+const nome=
+localStorage.getItem(
+"boraler_nome"
+)||"Estudante";
+
+try{
+
+await cliente
+.from("ranking")
+.upsert({
+id:idDispositivo(),
+nome:nome,
+xp:xp,
+atualizado_em:
+new Date().toISOString()
+});
+
+}catch(e){
+
+console.log(
+"Erro ao enviar ranking:",
+(e&&(e.message||e.details))||e
+);
+
+}
+
+}
+
+
+async function carregarRankingOnline(){
+
+const painel=
+document.getElementById(
+"rankingLista"
+);
+
+if(!painel){
+
+return;
+
+}
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+painel.innerHTML=
+'<p class="taskEmpty">'+
+"Ranking desativado. Configure o Supabase no código (SUPABASE_URL e SUPABASE_ANON_KEY) pra ativar."+
+"</p>";
+
+return;
+
+}
+
+painel.innerHTML=
+'<p class="taskEmpty">Carregando ranking...</p>';
+
+try{
+
+const resposta=
+await cliente
+.from("ranking")
+.select("id,nome,xp")
+.order("xp",{ascending:false})
+.limit(20);
+
+if(resposta.error){
+
+throw resposta.error;
+
+}
+
+const linhas=
+resposta.data||[];
+
+if(linhas.length===0){
+
+painel.innerHTML=
+'<p class="taskEmpty">Ninguém no ranking ainda. Complete uma tarefa pra aparecer aqui!</p>';
+
+return;
+
+}
+
+const meuId=
+idDispositivo();
+
+painel.innerHTML="";
+
+linhas.forEach(function(linha,indice){
+
+const eu=
+linha.id===meuId;
+
+const posicao=
+document.createElement("div");
+
+posicao.className=
+"rankRow"+
+(eu?" rankMe":"");
+
+posicao.innerHTML=
+'<span class="rankPos">'+
+(indice+1)+
+"º</span>"+
+'<span class="rankNome"></span>'+
+'<span class="rankXp">'+
+linha.xp+
+" XP</span>";
+
+posicao.querySelector(
+".rankNome"
+).textContent=
+linha.nome+
+(eu?" (você)":"");
+
+painel.appendChild(posicao);
+
+});
+
+}catch(e){
+
+const detalhe=
+(e&&(e.message||e.error_description||e.details))||
+"erro desconhecido";
+
+painel.innerHTML=
+'<p class="taskEmpty">Não deu pra carregar o ranking agora.<br><br>Detalhe: '+
+detalhe+
+"</p>";
+
+console.log(
+"Erro ao carregar ranking:",
+detalhe,
+e
+);
+
+}
 
 }
 
@@ -2412,12 +3672,16 @@ ATUALIZAR PROGRESSO
 
 function atualizar(){
 
+const lista=
+carregarListaTarefas();
+
+const total=
+lista.length;
+
 const tarefas=
-Number(
-localStorage.getItem(
-"boraler_tarefas"
-)||0
-);
+lista.filter(function(t){
+return t.feita;
+}).length;
 
 
 const xp=
@@ -2425,9 +3689,9 @@ tarefas*20;
 
 
 const porcentagem=
-Math.round(
-(tarefas/TOTAL_TAREFAS)*100
-);
+total>0?
+Math.round((tarefas/total)*100):
+0;
 
 
 const nivel=
@@ -2437,6 +3701,8 @@ Math.floor(xp/100)+1;
 const xpNivel=
 xp%100;
 
+
+/* HOME */
 
 document.getElementById(
 "statTarefas"
@@ -2461,6 +3727,8 @@ porcentagem+
 "% concluído";
 
 
+/* TAREFAS */
+
 document.getElementById(
 "barraTarefas"
 ).style.width=
@@ -2472,9 +3740,11 @@ document.getElementById(
 ).innerText=
 tarefas+
 " de "+
-TOTAL_TAREFAS+
+total+
 " concluídas";
 
+
+/* PROGRESSO */
 
 document.getElementById(
 "progTarefas"
@@ -2509,6 +3779,8 @@ document.getElementById(
 ).style.width=
 xpNivel+"%";
 
+
+/* PERFIL */
 
 document.getElementById(
 "perfilTarefas"
@@ -2547,7 +3819,6 @@ if(tipo==="livros"){
 area.innerHTML=
 `
 <h3>📚 Biblioteca</h3>
-
 <p class="muted">
 Entre em Livros, escolha o 6º, 7º, 8º ou 9º ano e depois selecione a matéria.
 </p>
@@ -2561,10 +3832,8 @@ if(tipo==="pdf"){
 area.innerHTML=
 `
 <h3>📄 Livros</h3>
-
 <p class="muted">
 Ao tocar em "Abrir livro", o PDF será carregado dentro do próprio Boraler.
-Links do Google Drive também são convertidos automaticamente para o modo de visualização.
 </p>
 `;
 
@@ -2576,7 +3845,6 @@ if(tipo==="tarefas"){
 area.innerHTML=
 `
 <h3>📝 Tarefas</h3>
-
 <p class="muted">
 Marque uma tarefa quando terminar. Cada atividade concluída dá 20 XP.
 </p>
@@ -2590,7 +3858,6 @@ if(tipo==="xp"){
 area.innerHTML=
 `
 <h3>🏆 XP</h3>
-
 <p class="muted">
 Seu XP aumenta conforme você completa tarefas e ajuda a subir de nível.
 </p>
@@ -2608,13 +3875,10 @@ TOAST
 function mostrarToast(texto){
 
 const toast=
-document.getElementById(
-"toast"
-);
+document.getElementById("toast");
 
 
-toast.innerText=texto;
-
+toast.innerHTML=texto;
 
 toast.style.display="block";
 
@@ -2629,69 +3893,24 @@ toast.style.display="none";
 
 
 /* ==================================================
-INICIAR APP
+INICIAR
 ================================================== */
 
-window.onload=async function(){
+window.onload=function(){
 
-try{
+if(
+localStorage.getItem(
+"boraler_logado"
+)==="sim"
+){
 
-const {data,error}=
-await supabaseClient.auth.getSession();
-
-
-if(error){
-
-console.error(error);
-
-return;
+abrirApp();
 
 }
-
-
-if(data.session){
-
-abrirAppComUsuario(
-data.session.user
-);
-
-}
-
-}catch(erro){
-
-console.error(erro);
-
-}
-
-
-supabaseClient.auth.onAuthStateChange(
-function(event,session){
-
-if(session){
-
-abrirAppComUsuario(
-session.user
-);
-
-}else if(event==="SIGNED_OUT"){
-
-document.getElementById("app")
-.style.display="none";
-
-
-document.getElementById("login")
-.style.display="flex";
-
-}
-
-}
-);
 
 };
 
 </script>
 
 </body>
-
 </html>
-
