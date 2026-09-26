@@ -2683,6 +2683,291 @@ return m?m[1]:null;
 }
 
 
+/* ==================================================
+CONVERSÃO DE BYTES <-> BASE64
+
+   O plugin Filesystem só grava/lê
+   arquivos em base64. Convertemos aos
+   pedaços (32KB por vez) pra não travar
+   com PDFs grandes.
+================================================== */
+
+function bytesParaBase64(buffer){
+
+const bytes=
+new Uint8Array(buffer);
+
+let binario="";
+
+const tamanhoBloco=0x8000;
+
+for(
+let i=0;
+i<bytes.length;
+i+=tamanhoBloco
+){
+
+const bloco=
+bytes.subarray(i,i+tamanhoBloco);
+
+binario+=
+String.fromCharCode.apply(
+null,bloco
+);
+
+}
+
+return btoa(binario);
+
+}
+
+
+function base64ParaBytes(base64){
+
+const binario=atob(base64);
+
+const bytes=
+new Uint8Array(binario.length);
+
+for(let i=0;i<binario.length;i++){
+
+bytes[i]=binario.charCodeAt(i);
+
+}
+
+return bytes.buffer;
+
+}
+
+
+function assinaturaEhPDF(buffer){
+
+const cabecalho=
+new Uint8Array(buffer.slice(0,5));
+
+let texto="";
+
+for(let i=0;i<cabecalho.length;i++){
+
+texto+=
+String.fromCharCode(cabecalho[i]);
+
+}
+
+return texto.indexOf("%PDF")===0;
+
+}
+
+
+/* ==================================================
+CACHE DE PDF NO PRÓPRIO CELULAR (OFFLINE)
+
+   Depois que um livro é aberto uma vez
+   (com internet), ele fica salvo dentro
+   do próprio app. Da próxima vez, abre
+   sem precisar de internet.
+
+   Livros muito grandes (acima do limite
+   abaixo) não ficam em cache, só pra não
+   pesar demais em celulares fracos — mas
+   ainda assim abrem normalmente com
+   internet.
+*/
+
+const LIMITE_CACHE_MB=60;
+
+
+function pluginArquivos(){
+
+if(
+typeof Capacitor!=="undefined"&&
+Capacitor.Plugins&&
+Capacitor.Plugins.Filesystem
+){
+
+return Capacitor.Plugins.Filesystem;
+
+}
+
+return null;
+
+}
+
+
+function nomeArquivoCache(ano,materia){
+
+return (
+"livro_"+ano+"_"+
+materia.replace(/[^a-zA-Z0-9]/g,"")+
+".pdf"
+);
+
+}
+
+
+async function lerPDFDoCache(nome){
+
+const FS=pluginArquivos();
+
+if(!FS){
+
+return null;
+
+}
+
+try{
+
+const resultado=
+await FS.readFile({
+path:nome,
+directory:"DATA"
+});
+
+return base64ParaBytes(
+resultado.data
+);
+
+}catch(e){
+
+return null;
+
+}
+
+}
+
+
+async function salvarPDFNoCache(nome,buffer){
+
+const FS=pluginArquivos();
+
+if(!FS){
+
+return;
+
+}
+
+const tamanhoMB=
+buffer.byteLength/(1024*1024);
+
+if(tamanhoMB>LIMITE_CACHE_MB){
+
+console.log(
+"PDF grande demais pra guardar em cache ("+
+tamanhoMB.toFixed(1)+
+"MB), vai continuar precisando de internet."
+);
+
+return;
+
+}
+
+try{
+
+await FS.writeFile({
+path:nome,
+directory:"DATA",
+data:bytesParaBase64(buffer)
+});
+
+}catch(e){
+
+console.log(
+"Não deu pra salvar o PDF em cache:",e
+);
+
+}
+
+}
+
+
+/* ==================================================
+BAIXAR PDF DO GOOGLE DRIVE
+   (com correção pra arquivos grandes)
+
+   Arquivos grandes do Drive não vêm
+   direto — o Drive manda uma página de
+   aviso ("não foi possível verificar
+   vírus") em vez do PDF. Aqui a gente
+   detecta isso e confirma o download
+   automaticamente.
+================================================== */
+
+async function baixarBytesDoGoogleDrive(idDrive){
+
+async function tentarBaixar(url){
+
+const resposta=
+await fetch(url);
+
+if(!resposta.ok){
+
+throw new Error(
+"Falha ao baixar (status "+
+resposta.status+")"
+);
+
+}
+
+return await resposta.arrayBuffer();
+
+}
+
+const urlBase=
+"https://drive.google.com/uc?export=download&id="+
+idDrive;
+
+let bytes=
+await tentarBaixar(urlBase);
+
+
+if(!assinaturaEhPDF(bytes)){
+
+/*
+   Não veio um PDF de verdade — deve
+   ser a página de aviso de arquivo
+   grande. Procuramos o código de
+   confirmação escondido nela.
+*/
+
+const decodificador=
+new TextDecoder();
+
+const texto=
+decodificador.decode(
+bytes.slice(0,300000)
+);
+
+const confirmacao=
+texto.match(
+/confirm=([0-9A-Za-z_-]+)/
+);
+
+if(confirmacao){
+
+bytes=await tentarBaixar(
+urlBase+
+"&confirm="+
+confirmacao[1]
+);
+
+}
+
+}
+
+
+if(!assinaturaEhPDF(bytes)){
+
+throw new Error(
+"Não foi possível baixar o PDF (arquivo grande demais ou bloqueado pelo Drive)"
+);
+
+}
+
+return bytes;
+
+}
+
+
 /*
    Guardamos o documento PDF já aberto
    e a página atual aqui fora, pra dar
@@ -2765,15 +3050,21 @@ idDoLinkDrive(link);
 
 /*
    Plano B: se o PDF.js falhar por
-   qualquer motivo (sem internet, link
-   inválido, etc.), mostramos o link
-   dentro do iframe como antes, em vez
-   de deixar a tela em branco.
+   qualquer motivo (sem internet e sem
+   cache, link inválido, etc.), mostramos
+   o link dentro do iframe como antes,
+   em vez de deixar a tela em branco.
 */
 
-function usarPlanoB(linkFallback){
+function usarPlanoB(linkFallback,mensagem){
 
 carregando.style.display="none";
+
+if(mensagem){
+
+mostrarToast(mensagem);
+
+}
 
 frame.style.display="block";
 
@@ -2791,25 +3082,31 @@ return;
 }
 
 
+const nomeCache=
+nomeArquivoCache(anoAtual,materia);
+
+
 try{
 
-const urlDireta=
-"https://drive.google.com/uc?export=download&id="+
-idDrive;
+let bytes=
+await lerPDFDoCache(nomeCache);
 
-const resposta=
-await fetch(urlDireta);
+let veioDoCache=
+!!bytes;
 
-if(!resposta.ok){
 
-throw new Error(
-"Falha ao baixar o PDF"
+if(!bytes){
+
+carregando.innerText=
+"Baixando PDF (primeira vez)...";
+
+bytes=
+await baixarBytesDoGoogleDrive(
+idDrive
 );
 
 }
 
-const bytes=
-await resposta.arrayBuffer();
 
 const documento=
 await pdfjsLib.getDocument({
@@ -2831,6 +3128,19 @@ documento.numPages>1?
 await renderizarPaginaPDF();
 
 
+/*
+   Salva em cache DEPOIS de já ter
+   mostrado a página — assim a pessoa
+   não fica esperando isso pra ler.
+*/
+
+if(!veioDoCache){
+
+salvarPDFNoCache(nomeCache,bytes);
+
+}
+
+
 }catch(e){
 
 console.log(
@@ -2840,7 +3150,8 @@ console.log(
 usarPlanoB(
 "https://drive.google.com/file/d/"+
 idDrive+
-"/preview"
+"/preview",
+"Não deu pra baixar o PDF. Verifique sua internet."
 );
 
 }
