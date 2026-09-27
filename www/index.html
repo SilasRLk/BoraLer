@@ -978,10 +978,23 @@ box-shadow:0 2px 10px rgba(0,0,0,.4);
 .pdfCarregando{
 height:calc(100vh - 62px);
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
+gap:18px;
 color:#888;
 font-size:14px;
+text-align:center;
+padding:0 30px;
+}
+
+.pdfCancelarBtn{
+border:1px solid #444;
+background:none;
+color:#ccc;
+border-radius:100px;
+padding:10px 22px;
+font-size:13px;
 }
 
 /* TOAST */
@@ -1969,7 +1982,19 @@ Livro
 id="pdfCarregando"
 class="pdfCarregando"
 >
+
+<div id="pdfCarregandoTexto">
 Carregando PDF...
+</div>
+
+<button
+id="pdfCancelarBtn"
+class="pdfCancelarBtn"
+onclick="fecharPDF()"
+>
+Cancelar
+</button>
+
 </div>
 
 <div
@@ -2156,35 +2181,35 @@ LINKS DOS PDFS
 const LIVROS = {
 
 6:{
-Português:"https://drive.google.com/file/d/1bSHx4-gqUHr9MHP41puGXfv_UjFYiS1E/preview",
-Matemática:"https://drive.google.com/file/d/1NbYMqivMDNG2acD9M6qKHat5UiqP8zXy/preview",
-História:"https://drive.google.com/file/d/1rcmGWTnOtwx3g3mAVZeWY_riBLSmj5eb/preview",
-Geografia:"https://drive.google.com/file/d/1wtBS22H068vW1VHNB1ZHhC4fuSkinsPc/preview",
-Ciências:"https://drive.google.com/file/d/10djDqDdD0lJvbRj2OsSFT7l4cY0-EDN0/preview"
+Português:"pdfs/portugues-6.pdf",
+Matemática:"pdfs/matematica-6.pdf",
+História:"pdfs/historia-6.pdf",
+Geografia:"pdfs/geografia-6.pdf",
+Ciências:"pdfs/ciencias-6.pdf"
 },
 
 7:{
-Português:"https://drive.google.com/file/d/1CJl_tuqJPBPmCsTzfwB2f1PO4qDTpbvH/preview",
-Matemática:"https://drive.google.com/file/d/1x9VdtQ_FL185aMOY6liiEWpuFQJ4eYy7/preview",
-História:"https://drive.google.com/file/d/1w06riCjpZBos5BAszYir2Ft4kGgMUy7m/preview",
-Geografia:"https://drive.google.com/file/d/1Jl5TgsXsD5Yt_6EBoWDsGIgId6PzDX8a/preview",
-Ciências:"https://drive.google.com/file/d/1HMPsMwhkfUMhnkr3t--1tPKEvtdnee24/preview"
+Português:"pdfs/portugues-7.pdf",
+Matemática:"pdfs/matematica-7.pdf",
+História:"pdfs/historia-7.pdf",
+Geografia:"pdfs/geografia-7.pdf",
+Ciências:"pdfs/ciencias-7.pdf"
 },
 
 8:{
-Português:"https://drive.google.com/file/d/1y_x9alWfk58IgqgBmCacnP6yWWPgjfdl/preview",
-Matemática:"https://drive.google.com/file/d/135P_nJqj4kyBeIKsQUz1xhQM8Towrf9_/preview",
-História:"https://drive.google.com/file/d/1cp5DGDlto2kZAryy7wHezgx09zo61eWJ/preview",
-Geografia:"https://drive.google.com/file/d/1XK6J0Mxd05kSYkP91l2YoDtRNmoYyipl/preview",
-Ciências:"https://drive.google.com/file/d/1NOlhtHjb9_Uba6w6izoSJM87TD2E02mG/preview"
+Português:"pdfs/portugues-8.pdf",
+Matemática:"pdfs/matematica-8.pdf",
+História:"pdfs/historia-8.pdf",
+Geografia:"pdfs/geografia-8.pdf",
+Ciências:"pdfs/ciencias-8.pdf"
 },
 
 9:{
-Português:"https://drive.google.com/file/d/1d2YQmulndzsSRLhFPmo7ThjgOV7g7qmJ/preview",
-Matemática:"https://drive.google.com/file/d/1B08HuW8zGN0Y6v9SR8l7H_6jTsiRlgun/preview",
-História:"https://drive.google.com/file/d/14H7wpcg1Em2NvzUaFrdeuNKtFLXpRJpk/preview",
-Geografia:"https://drive.google.com/file/d/1-f3b-XGvRYmcZ7oQgIiV1fAr76QNf2LE/preview",
-Ciências:"https://drive.google.com/file/d/1PBVjFkma4vFvucUyRn4Aj7R-oc75pkzO/preview"
+Português:"pdfs/portugues-9.pdf",
+Matemática:"pdfs/matematica-9.pdf",
+História:"pdfs/historia-9.pdf",
+Geografia:"pdfs/geografia-9.pdf",
+Ciências:"pdfs/ciencias-9.pdf"
 }
 
 };
@@ -2683,63 +2708,6 @@ return m?m[1]:null;
 }
 
 
-/* ==================================================
-CONVERSÃO DE BYTES <-> BASE64
-
-   O plugin Filesystem só grava/lê
-   arquivos em base64. Convertemos aos
-   pedaços (32KB por vez) pra não travar
-   com PDFs grandes.
-================================================== */
-
-function bytesParaBase64(buffer){
-
-const bytes=
-new Uint8Array(buffer);
-
-let binario="";
-
-const tamanhoBloco=0x8000;
-
-for(
-let i=0;
-i<bytes.length;
-i+=tamanhoBloco
-){
-
-const bloco=
-bytes.subarray(i,i+tamanhoBloco);
-
-binario+=
-String.fromCharCode.apply(
-null,bloco
-);
-
-}
-
-return btoa(binario);
-
-}
-
-
-function base64ParaBytes(base64){
-
-const binario=atob(base64);
-
-const bytes=
-new Uint8Array(binario.length);
-
-for(let i=0;i<binario.length;i++){
-
-bytes[i]=binario.charCodeAt(i);
-
-}
-
-return bytes.buffer;
-
-}
-
-
 function assinaturaEhPDF(buffer){
 
 const cabecalho=
@@ -2760,127 +2728,6 @@ return texto.indexOf("%PDF")===0;
 
 
 /* ==================================================
-CACHE DE PDF NO PRÓPRIO CELULAR (OFFLINE)
-
-   Depois que um livro é aberto uma vez
-   (com internet), ele fica salvo dentro
-   do próprio app. Da próxima vez, abre
-   sem precisar de internet.
-
-   Livros muito grandes (acima do limite
-   abaixo) não ficam em cache, só pra não
-   pesar demais em celulares fracos — mas
-   ainda assim abrem normalmente com
-   internet.
-*/
-
-const LIMITE_CACHE_MB=60;
-
-
-function pluginArquivos(){
-
-if(
-typeof Capacitor!=="undefined"&&
-Capacitor.Plugins&&
-Capacitor.Plugins.Filesystem
-){
-
-return Capacitor.Plugins.Filesystem;
-
-}
-
-return null;
-
-}
-
-
-function nomeArquivoCache(ano,materia){
-
-return (
-"livro_"+ano+"_"+
-materia.replace(/[^a-zA-Z0-9]/g,"")+
-".pdf"
-);
-
-}
-
-
-async function lerPDFDoCache(nome){
-
-const FS=pluginArquivos();
-
-if(!FS){
-
-return null;
-
-}
-
-try{
-
-const resultado=
-await FS.readFile({
-path:nome,
-directory:"DATA"
-});
-
-return base64ParaBytes(
-resultado.data
-);
-
-}catch(e){
-
-return null;
-
-}
-
-}
-
-
-async function salvarPDFNoCache(nome,buffer){
-
-const FS=pluginArquivos();
-
-if(!FS){
-
-return;
-
-}
-
-const tamanhoMB=
-buffer.byteLength/(1024*1024);
-
-if(tamanhoMB>LIMITE_CACHE_MB){
-
-console.log(
-"PDF grande demais pra guardar em cache ("+
-tamanhoMB.toFixed(1)+
-"MB), vai continuar precisando de internet."
-);
-
-return;
-
-}
-
-try{
-
-await FS.writeFile({
-path:nome,
-directory:"DATA",
-data:bytesParaBase64(buffer)
-});
-
-}catch(e){
-
-console.log(
-"Não deu pra salvar o PDF em cache:",e
-);
-
-}
-
-}
-
-
-/* ==================================================
 BAIXAR PDF DO GOOGLE DRIVE
    (com correção pra arquivos grandes)
 
@@ -2892,12 +2739,12 @@ BAIXAR PDF DO GOOGLE DRIVE
    automaticamente.
 ================================================== */
 
-async function baixarBytesDoGoogleDrive(idDrive){
+async function baixarBytesDoGoogleDrive(idDrive,signal){
 
 async function tentarBaixar(url){
 
 const resposta=
-await fetch(url);
+await fetch(url,{signal:signal});
 
 if(!resposta.ok){
 
@@ -2984,6 +2831,10 @@ let _pdfDocumentoAtual=null;
 
 let _pdfPaginaAtual=1;
 
+let _pdfAbortController=null;
+
+let _pdfCanceladoPeloUsuario=false;
+
 
 async function abrirPDF(link,materia){
 
@@ -3017,6 +2868,9 @@ document.getElementById("pdfPaginas");
 const carregando=
 document.getElementById("pdfCarregando");
 
+const carregandoTexto=
+document.getElementById("pdfCarregandoTexto");
+
 const frame=
 document.getElementById("pdfFrame");
 
@@ -3035,25 +2889,23 @@ frame.src="";
 
 carregando.style.display="flex";
 
-carregando.innerText=
-"Carregando PDF...";
+carregandoTexto.innerText=
+"Abrindo...";
 
 
 _pdfDocumentoAtual=null;
 
 _pdfPaginaAtual=1;
 
-
-const idDrive=
-idDoLinkDrive(link);
+_pdfCanceladoPeloUsuario=false;
 
 
 /*
    Plano B: se o PDF.js falhar por
-   qualquer motivo (sem internet e sem
-   cache, link inválido, etc.), mostramos
-   o link dentro do iframe como antes,
-   em vez de deixar a tela em branco.
+   qualquer motivo (arquivo corrompido,
+   link inválido, etc.), mostramos o
+   link dentro do iframe como antes, em
+   vez de deixar a tela em branco.
 */
 
 function usarPlanoB(linkFallback,mensagem){
@@ -3073,6 +2925,30 @@ frame.src=linkFallback;
 }
 
 
+const ehLinkRemoto=
+link.indexOf("http")===0;
+
+
+try{
+
+let bytes;
+
+
+if(ehLinkRemoto){
+
+/*
+   Só entra aqui se um livro ainda
+   estiver usando link do Google Drive
+   (por exemplo, um adicionado no
+   futuro antes de ser comprimido e
+   colocado dentro do app). Os 20
+   livros padrão já são arquivos
+   locais e não passam por aqui.
+*/
+
+const idDrive=
+idDoLinkDrive(link);
+
 if(!idDrive){
 
 usarPlanoB(link);
@@ -3081,37 +2957,49 @@ return;
 
 }
 
+carregandoTexto.innerText=
+"Baixando PDF (primeira vez)...\nLivros grandes podem levar alguns minutos.";
 
-const nomeCache=
-nomeArquivoCache(anoAtual,materia);
+_pdfAbortController=
+new AbortController();
 
+const tempoLimite=
+setTimeout(function(){
+
+_pdfAbortController.abort();
+
+},120000);
 
 try{
 
-let bytes=
-await lerPDFDoCache(nomeCache);
-
-let veioDoCache=
-!!bytes;
-
-
-if(!bytes){
-
-carregando.innerText=
-"Baixando PDF (primeira vez)...";
-
 bytes=
 await baixarBytesDoGoogleDrive(
-idDrive
+idDrive,
+_pdfAbortController.signal
 );
+
+}finally{
+
+clearTimeout(tempoLimite);
+
+}
+
+carregandoTexto.innerText=
+"Processando o livro...";
 
 }
 
 
+/*
+   Arquivo local (o caso normal): o
+   PDF.js abre ele direto do próprio
+   app, sem internet, instantâneo.
+*/
+
 const documento=
-await pdfjsLib.getDocument({
-data:bytes
-}).promise;
+ehLinkRemoto?
+await pdfjsLib.getDocument({data:bytes}).promise:
+await pdfjsLib.getDocument(link).promise;
 
 _pdfDocumentoAtual=documento;
 
@@ -3128,30 +3016,32 @@ documento.numPages>1?
 await renderizarPaginaPDF();
 
 
+}catch(e){
+
+_pdfAbortController=null;
+
+
+if(_pdfCanceladoPeloUsuario){
+
 /*
-   Salva em cache DEPOIS de já ter
-   mostrado a página — assim a pessoa
-   não fica esperando isso pra ler.
+   A pessoa mesma cancelou — a tela já
+   foi fechada pelo fecharPDF(), então
+   não fazemos nada aqui.
 */
 
-if(!veioDoCache){
-
-salvarPDFNoCache(nomeCache,bytes);
+return;
 
 }
 
 
-}catch(e){
-
 console.log(
-"PDF.js falhou, usando plano B:",e
+"Não foi possível abrir o PDF:",e
 );
 
-usarPlanoB(
-"https://drive.google.com/file/d/"+
-idDrive+
-"/preview",
-"Não deu pra baixar o PDF. Verifique sua internet."
+carregando.style.display="none";
+
+mostrarToast(
+"Não foi possível abrir esse livro."
 );
 
 }
@@ -3279,6 +3169,15 @@ FECHAR PDF
 ================================================== */
 
 function fecharPDF(){
+
+if(_pdfAbortController){
+
+_pdfCanceladoPeloUsuario=true;
+
+_pdfAbortController.abort();
+
+}
+
 
 document.getElementById(
 "pdfFrame"
