@@ -819,6 +819,104 @@ justify-content:center;
 font-size:37px;
 font-weight:bold;
 margin:auto;
+overflow:hidden;
+position:relative;
+}
+
+.avatar img,
+.headerUser img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:50%;
+}
+
+.avatarEditBtn{
+position:absolute;
+bottom:-2px;
+right:calc(50% - 47px);
+width:30px;
+height:30px;
+border-radius:50%;
+background:#181818;
+border:2px solid var(--dark);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:13px;
+}
+
+.nomeLinha{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+}
+
+.nomeEditBtn{
+border:0;
+background:none;
+color:#888;
+font-size:14px;
+padding:4px;
+}
+
+.editNomeRow{
+display:none;
+gap:8px;
+margin-top:10px;
+}
+
+.editNomeRow.on{
+display:flex;
+}
+
+.editNomeRow input{
+flex:1;
+margin:0;
+}
+
+.editNomeRow button{
+border:0;
+background:var(--gold);
+color:#111;
+border-radius:12px;
+padding:0 16px;
+font-weight:bold;
+font-size:13px;
+}
+
+.rankFoto{
+width:28px;
+height:28px;
+border-radius:50%;
+object-fit:cover;
+flex-shrink:0;
+}
+
+.rankFotoLetra{
+width:28px;
+height:28px;
+border-radius:50%;
+background:#222;
+color:var(--gold);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+font-weight:bold;
+flex-shrink:0;
+}
+
+.rankRetryBtn{
+display:block;
+margin:10px auto 0;
+border:1px solid #444;
+background:none;
+color:#ccc;
+border-radius:100px;
+padding:9px 20px;
+font-size:12px;
 }
 
 /* SETTINGS */
@@ -1131,6 +1229,7 @@ placeholder="Sua senha"
 >
 
 <button
+id="btnCriarConta"
 class="btn full"
 onclick="cadastrar()"
 >
@@ -1767,16 +1866,54 @@ Suas informações no Boraler.
 
 <div class="profile">
 
+<div style="position:relative;width:94px;margin:auto;">
+
 <div
 id="avatarGrande"
 class="avatar"
+onclick="escolherFoto()"
 >
 B
 </div>
 
+<button
+class="avatarEditBtn"
+onclick="escolherFoto()"
+>
+✏️
+</button>
+
+</div>
+
+<input
+type="file"
+id="fotoInput"
+accept="image/*"
+style="display:none;"
+onchange="fotoSelecionada(this)"
+>
+
+<div class="nomeLinha">
 <h2 id="nomePerfil">
 Estudante
 </h2>
+<button
+class="nomeEditBtn"
+onclick="editarNome()"
+>
+✏️
+</button>
+</div>
+
+<div id="editNomeRow" class="editNomeRow">
+<input
+type="text"
+id="novoNomeInput"
+class="field"
+placeholder="Seu nome"
+>
+<button onclick="salvarNome()">Salvar</button>
+</div>
 
 <p
 id="emailPerfil"
@@ -2226,7 +2363,94 @@ let anoAtual=6;
 CADASTRO
 ================================================== */
 
-function cadastrar(){
+async function emailJaFoiUsado(email){
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+/*
+   Sem Supabase configurado, não tem
+   como checar — deixa cadastrar
+   normalmente (só no aparelho).
+*/
+
+return false;
+
+}
+
+try{
+
+const resposta=
+await cliente
+.from("contas_registradas")
+.select("email")
+.eq(
+"email",
+email.toLowerCase()
+)
+.maybeSingle();
+
+if(resposta.error){
+
+throw resposta.error;
+
+}
+
+return !!resposta.data;
+
+}catch(e){
+
+/*
+   Se a checagem falhar (sem
+   internet, etc.), deixa cadastrar
+   — melhor não travar a pessoa por
+   causa de uma instabilidade.
+*/
+
+console.log(
+"Não foi possível checar e-mail:",e
+);
+
+return false;
+
+}
+
+}
+
+
+async function registrarEmailNoServidor(email){
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+return;
+
+}
+
+try{
+
+await cliente
+.from("contas_registradas")
+.insert({
+email:email.toLowerCase()
+});
+
+}catch(e){
+
+console.log(
+"Não foi possível registrar e-mail:",e
+);
+
+}
+
+}
+
+
+async function cadastrar(){
 
 const nome=
 document.getElementById("nomeCadastro")
@@ -2250,6 +2474,39 @@ document.getElementById("msg")
 return;
 
 }
+
+
+const botao=
+document.getElementById(
+"btnCriarConta"
+);
+
+botao.disabled=true;
+
+botao.innerText=
+"Verificando...";
+
+const jaUsado=
+await emailJaFoiUsado(email);
+
+botao.disabled=false;
+
+botao.innerText=
+"CRIAR CONTA";
+
+
+if(jaUsado){
+
+document.getElementById("msg")
+.innerText=
+"Esse e-mail já criou uma conta antes. Use outro e-mail ou toque em Entrar.";
+
+return;
+
+}
+
+
+registrarEmailNoServidor(email);
 
 
 /*
@@ -2429,6 +2686,9 @@ document.getElementById(
 ).innerText=letra;
 
 
+aplicarAvatar();
+
+
 atualizar();
 
 renderizarTarefas();
@@ -2440,6 +2700,254 @@ carregarLivros();
 pedirPermissaoNotificacao();
 
 agendarLembrete();
+
+enviarRankingOnline();
+
+}
+
+
+/* ==================================================
+FOTO DE PERFIL
+
+   A foto fica guardada só neste
+   aparelho (localStorage). Uma versão
+   pequena dela também é enviada junto
+   com o ranking, pra aparecer pros
+   outros usuários.
+================================================== */
+
+function aplicarAvatar(){
+
+const foto=
+localStorage.getItem("boraler_foto");
+
+if(!foto){
+
+return;
+
+}
+
+[
+"avatarMini",
+"avatarGrande"
+].forEach(function(id){
+
+const el=
+document.getElementById(id);
+
+el.innerHTML=
+'<img src="'+foto+'">';
+
+});
+
+}
+
+
+function escolherFoto(){
+
+document.getElementById(
+"fotoInput"
+).click();
+
+}
+
+
+function redimensionarImagem(arquivo,tamanhoMax,qualidade){
+
+return new Promise(function(resolve,reject){
+
+const leitor=new FileReader();
+
+leitor.onload=function(e){
+
+const imagem=new Image();
+
+imagem.onload=function(){
+
+let largura=imagem.width;
+
+let altura=imagem.height;
+
+const corte=
+Math.min(largura,altura);
+
+const canvas=
+document.createElement("canvas");
+
+canvas.width=tamanhoMax;
+
+canvas.height=tamanhoMax;
+
+const ctx=
+canvas.getContext("2d");
+
+ctx.drawImage(
+imagem,
+(largura-corte)/2,
+(altura-corte)/2,
+corte,
+corte,
+0,0,tamanhoMax,tamanhoMax
+);
+
+resolve(
+canvas.toDataURL(
+"image/jpeg",qualidade
+)
+);
+
+};
+
+imagem.onerror=reject;
+
+imagem.src=e.target.result;
+
+};
+
+leitor.onerror=reject;
+
+leitor.readAsDataURL(arquivo);
+
+});
+
+}
+
+
+async function fotoSelecionada(input){
+
+const arquivo=
+input.files&&input.files[0];
+
+if(!arquivo){
+
+return;
+
+}
+
+try{
+
+const fotoGrande=
+await redimensionarImagem(
+arquivo,240,0.85
+);
+
+const fotoMini=
+await redimensionarImagem(
+arquivo,48,0.7
+);
+
+localStorage.setItem(
+"boraler_foto",fotoGrande
+);
+
+localStorage.setItem(
+"boraler_foto_mini",fotoMini
+);
+
+aplicarAvatar();
+
+mostrarToast(
+"✓ Foto de perfil atualizada"
+);
+
+enviarRankingOnline();
+
+}catch(e){
+
+console.log(
+"Erro ao processar foto:",e
+);
+
+mostrarToast(
+"Não foi possível usar essa imagem."
+);
+
+}
+
+input.value="";
+
+}
+
+
+/* ==================================================
+TROCAR NOME
+================================================== */
+
+function editarNome(){
+
+const linha=
+document.getElementById(
+"editNomeRow"
+);
+
+const atual=
+localStorage.getItem(
+"boraler_nome"
+)||"";
+
+document.getElementById(
+"novoNomeInput"
+).value=atual;
+
+linha.classList.toggle("on");
+
+}
+
+
+function salvarNome(){
+
+const novoNome=
+document.getElementById(
+"novoNomeInput"
+).value.trim();
+
+if(!novoNome){
+
+mostrarToast(
+"Digite um nome válido."
+);
+
+return;
+
+}
+
+localStorage.setItem(
+"boraler_nome",novoNome
+);
+
+const letra=
+novoNome.charAt(0)
+.toUpperCase();
+
+document.getElementById(
+"nomeHome"
+).innerText=novoNome;
+
+document.getElementById(
+"nomePerfil"
+).innerText=novoNome;
+
+if(!localStorage.getItem(
+"boraler_foto"
+)){
+
+document.getElementById(
+"avatarMini"
+).innerText=letra;
+
+document.getElementById(
+"avatarGrande"
+).innerText=letra;
+
+}
+
+document.getElementById(
+"editNomeRow"
+).classList.remove("on");
+
+mostrarToast(
+"✓ Nome atualizado"
+);
 
 enviarRankingOnline();
 
@@ -3215,7 +3723,7 @@ TAREFAS (lista dinâmica, criada pela pessoa)
    abaixo (em minutos).
 */
 
-const MINUTOS_ANTES_DE_CONCLUIR=1;
+const MINUTOS_ANTES_DE_CONCLUIR=10;
 
 
 function carregarListaTarefas(){
@@ -3737,6 +4245,11 @@ localStorage.getItem(
 "boraler_nome"
 )||"Estudante";
 
+const foto=
+localStorage.getItem(
+"boraler_foto_mini"
+)||null;
+
 try{
 
 await cliente
@@ -3745,6 +4258,7 @@ await cliente
 id:idDispositivo(),
 nome:nome,
 xp:xp,
+foto:foto,
 atualizado_em:
 new Date().toISOString()
 });
@@ -3796,7 +4310,7 @@ try{
 const resposta=
 await cliente
 .from("ranking")
-.select("id,nome,xp")
+.select("id,nome,xp,foto")
 .order("xp",{ascending:false})
 .limit(20);
 
@@ -3821,6 +4335,9 @@ return;
 const meuId=
 idDispositivo();
 
+const medalhas=
+["🥇","🥈","🥉"];
+
 painel.innerHTML="";
 
 linhas.forEach(function(linha,indice){
@@ -3835,10 +4352,22 @@ posicao.className=
 "rankRow"+
 (eu?" rankMe":"");
 
+const posicaoTexto=
+medalhas[indice]||
+(indice+1)+"º";
+
+const fotoHtml=
+linha.foto?
+'<img class="rankFoto" src="'+linha.foto+'">':
+'<div class="rankFotoLetra">'+
+(linha.nome||"?").charAt(0).toUpperCase()+
+"</div>";
+
 posicao.innerHTML=
 '<span class="rankPos">'+
-(indice+1)+
-"º</span>"+
+posicaoTexto+
+"</span>"+
+fotoHtml+
 '<span class="rankNome"></span>'+
 '<span class="rankXp">'+
 linha.xp+
@@ -3863,7 +4392,8 @@ const detalhe=
 painel.innerHTML=
 '<p class="taskEmpty">Não deu pra carregar o ranking agora.<br><br>Detalhe: '+
 detalhe+
-"</p>";
+"</p>"+
+'<button class="rankRetryBtn" onclick="carregarRankingOnline()">Tentar de novo</button>';
 
 console.log(
 "Erro ao carregar ranking:",
