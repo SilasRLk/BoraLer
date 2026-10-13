@@ -2318,35 +2318,35 @@ LINKS DOS PDFS
 const LIVROS = {
 
 6:{
-Português:"pdfs/portugues-6.pdf",
-Matemática:"pdfs/matematica-6.pdf",
-História:"pdfs/historia-6.pdf",
-Geografia:"pdfs/geografia-6.pdf",
-Ciências:"pdfs/ciencias-6.pdf"
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-6.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-6.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-6.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-6.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-6.pdf"
 },
 
 7:{
-Português:"pdfs/portugues-7.pdf",
-Matemática:"pdfs/matematica-7.pdf",
-História:"pdfs/historia-7.pdf",
-Geografia:"pdfs/geografia-7.pdf",
-Ciências:"pdfs/ciencias-7.pdf"
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-7.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-7.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-7.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-7.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-7.pdf"
 },
 
 8:{
-Português:"pdfs/portugues-8.pdf",
-Matemática:"pdfs/matematica-8.pdf",
-História:"pdfs/historia-8.pdf",
-Geografia:"pdfs/geografia-8.pdf",
-Ciências:"pdfs/ciencias-8.pdf"
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-8.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-8.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-8.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-8.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-8.pdf"
 },
 
 9:{
-Português:"pdfs/portugues-9.pdf",
-Matemática:"pdfs/matematica-9.pdf",
-História:"pdfs/historia-9.pdf",
-Geografia:"pdfs/geografia-9.pdf",
-Ciências:"pdfs/ciencias-9.pdf"
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-9.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-9.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-9.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-9.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-9.pdf"
 }
 
 };
@@ -3454,10 +3454,13 @@ if(ehLinkRemoto){
    locais e não passam por aqui.
 */
 
-const idDrive=
-idDoLinkDrive(link);
+const ehDrive=
+link.indexOf("drive.google.com")>=0;
 
-if(!idDrive){
+const idDrive=
+ehDrive?idDoLinkDrive(link):null;
+
+if(ehDrive&&!idDrive){
 
 usarPlanoB(link);
 
@@ -3466,7 +3469,7 @@ return;
 }
 
 carregandoTexto.innerText=
-"Baixando PDF (primeira vez)...\nLivros grandes podem levar alguns minutos.";
+"Baixando o livro...\nLivros grandes podem levar alguns minutos.";
 
 _pdfAbortController=
 new AbortController();
@@ -3476,15 +3479,47 @@ setTimeout(function(){
 
 _pdfAbortController.abort();
 
-},120000);
+},180000);
 
 try{
+
+if(ehDrive){
 
 bytes=
 await baixarBytesDoGoogleDrive(
 idDrive,
 _pdfAbortController.signal
 );
+
+}else{
+
+const resposta=
+await fetch(
+link,
+{signal:_pdfAbortController.signal}
+);
+
+if(!resposta.ok){
+
+throw new Error(
+"Falha ao baixar (status "+
+resposta.status+")"
+);
+
+}
+
+bytes=
+await resposta.arrayBuffer();
+
+if(!assinaturaEhPDF(bytes)){
+
+throw new Error(
+"O arquivo baixado nao e um PDF"
+);
+
+}
+
+}
 
 }finally{
 
