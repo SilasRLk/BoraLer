@@ -3344,6 +3344,122 @@ let _pdfAbortController=null;
 let _pdfCanceladoPeloUsuario=false;
 
 
+function pluginArquivos(){
+
+if(
+typeof Capacitor!=="undefined"&&
+Capacitor.isNativePlatform&&
+Capacitor.isNativePlatform()&&
+Capacitor.Plugins&&
+Capacitor.Plugins.Filesystem
+){
+
+return Capacitor.Plugins.Filesystem;
+
+}
+
+return null;
+
+}
+
+
+async function prepararLivroNoAparelho(url,texto){
+
+const FS=pluginArquivos();
+
+const nome="livros/"+url.split("/").pop();
+
+const dir="CACHE";
+
+let existe=false;
+
+try{
+
+const st=
+await FS.stat({path:nome,directory:dir});
+
+existe=!!(st&&st.size>100000);
+
+}catch(e){}
+
+if(!existe){
+
+const tmp=nome+".tmp";
+
+try{
+await FS.deleteFile({path:tmp,directory:dir});
+}catch(e){}
+
+let ouvinte=null;
+
+try{
+
+ouvinte=
+await FS.addListener(
+"progress",
+function(ev){
+
+if(!ev){return;}
+
+if(ev.contentLength>0){
+
+texto.innerText=
+"Abrindo o livro... "+
+Math.round(ev.bytes*100/ev.contentLength)+
+"%\nLivros grandes podem levar alguns minutos.";
+
+}else if(ev.bytes){
+
+texto.innerText=
+"Abrindo o livro... "+
+Math.round(ev.bytes/1048576)+
+" MB\nLivros grandes podem levar alguns minutos.";
+
+}
+
+});
+
+}catch(e){}
+
+try{
+
+await FS.downloadFile({
+url:url,
+path:tmp,
+directory:dir,
+recursive:true,
+progress:true
+});
+
+}finally{
+
+if(ouvinte&&ouvinte.remove){
+ouvinte.remove();
+}
+
+}
+
+try{
+await FS.deleteFile({path:nome,directory:dir});
+}catch(e){}
+
+await FS.rename({
+from:tmp,
+to:nome,
+directory:dir,
+toDirectory:dir
+});
+
+}
+
+const r=
+await FS.getUri({path:nome,directory:dir});
+
+return Capacitor.convertFileSrc(r.uri);
+
+}
+
+
 async function abrirPDF(link,materia){
 
 if(!link){
@@ -3441,6 +3557,8 @@ try{
 
 let bytes;
 
+let urlLocal=null;
+
 
 if(ehLinkRemoto){
 
@@ -3467,6 +3585,25 @@ usarPlanoB(link);
 return;
 
 }
+
+if(!ehDrive&&pluginArquivos()){
+
+carregandoTexto.innerText=
+"Abrindo o livro...\nLivros grandes podem levar alguns minutos.";
+
+urlLocal=
+await prepararLivroNoAparelho(
+link,
+carregandoTexto
+);
+
+if(_pdfCanceladoPeloUsuario){
+
+return;
+
+}
+
+}else{
 
 carregandoTexto.innerText=
 "Abrindo o livro...\nLivros grandes podem levar alguns minutos.";
@@ -3527,6 +3664,8 @@ clearTimeout(tempoLimite);
 
 }
 
+}
+
 carregandoTexto.innerText=
 "Processando o livro...";
 
@@ -3540,6 +3679,8 @@ carregandoTexto.innerText=
 */
 
 const documento=
+urlLocal?
+await pdfjsLib.getDocument({url:urlLocal}).promise:
 ehLinkRemoto?
 await pdfjsLib.getDocument({data:bytes}).promise:
 await pdfjsLib.getDocument(link).promise;
@@ -3580,6 +3721,19 @@ return;
 console.log(
 "Não foi possível abrir o PDF:",e
 );
+
+try{
+
+if(urlLocal&&pluginArquivos()){
+
+pluginArquivos().deleteFile({
+path:"livros/"+link.split("/").pop(),
+directory:"CACHE"
+});
+
+}
+
+}catch(e2){}
 
 carregando.style.display="none";
 
