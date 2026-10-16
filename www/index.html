@@ -3825,6 +3825,8 @@ renderizarTarefas();
 
 atualizar();
 
+agendarLembrete();
+
 }
 
 
@@ -3912,6 +3914,8 @@ salvarListaTarefas(lista);
 renderizarTarefas();
 
 atualizar();
+
+agendarLembrete();
 
 }
 
@@ -4098,7 +4102,7 @@ LEMBRETE (notificação local)
    número abaixo (em horas).
 ================================================== */
 
-const HORAS_LEMBRETE=24;
+const HORAS_LEMBRETE=1;
 
 
 function pluginNotificacao(){
@@ -4163,18 +4167,47 @@ await LN.cancel({
 notifications:[{id:1}]
 });
 
-const disparoEm=
-new Date(
-Date.now()+
-HORAS_LEMBRETE*60*60*1000
-);
+const pendentes=
+carregarListaTarefas().filter(
+function(t){
+return !t.feita;
+});
+
+if(pendentes.length===0){
+
+return;
+
+}
+
+pendentes.sort(function(x,y){
+return (x.criadoEm||0)-(y.criadoEm||0);
+});
+
+const maisAntiga=
+pendentes[0];
+
+const intervalo=
+HORAS_LEMBRETE*60*60*1000;
+
+let quando=
+(maisAntiga.criadoEm||Date.now())+
+intervalo;
+
+if(quando<=Date.now()+60000){
+
+quando=Date.now()+intervalo;
+
+}
 
 await LN.schedule({
 notifications:[{
 id:1,
 title:"Hora de estudar! 📚",
-body:"Você ainda não concluiu nenhuma tarefa. Que tal fazer uma agora?",
-schedule:{at:disparoEm}
+body:"Você ainda não concluiu: "+
+maisAntiga.texto,
+smallIcon:"ic_stat_boraler",
+iconColor:"#f5c542",
+schedule:{at:new Date(quando)}
 }]
 });
 

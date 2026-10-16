@@ -15,6 +15,10 @@
   "plugins": {
     "CapacitorHttp": {
       "enabled": true
+    },
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_boraler",
+      "iconColor": "#f5c542"
     }
   },
   "android": {
