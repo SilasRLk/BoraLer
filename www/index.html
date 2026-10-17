@@ -3347,6 +3347,10 @@ let _pdfSessao=0;
 
 const _downloadsEmAndamento={};
 
+const VERSAO_LIVROS="2";
+
+let _cacheAntigoLimpo=false;
+
 
 function pluginArquivos(){
 
@@ -3396,9 +3400,26 @@ async function prepararLivroNoAparelhoInterno(url,texto){
 
 const FS=pluginArquivos();
 
-const nome="livro-"+url.split("/").pop();
+const prefixoAtual="livro-v"+VERSAO_LIVROS+"-";
+
+const nome=prefixoAtual+url.split("/").pop();
 
 const dir="CACHE";
+
+if(!_cacheAntigoLimpo){
+_cacheAntigoLimpo=true;
+try{
+const lista=await FS.readdir({path:"",directory:dir});
+const arquivos=(lista&&lista.files)||[];
+for(let i=0;i<arquivos.length;i++){
+const f=arquivos[i];
+const n=(typeof f==="string")?f:f.name;
+if(n&&n.indexOf("livro-")===0&&n.indexOf(prefixoAtual)!==0){
+try{await FS.deleteFile({path:n,directory:dir});}catch(e){}
+}
+}
+}catch(e){}
+}
 
 let existe=false;
 
@@ -3772,7 +3793,7 @@ try{
 if(urlLocal&&pluginArquivos()){
 
 pluginArquivos().deleteFile({
-path:"livro-"+link.split("/").pop(),
+path:"livro-v"+VERSAO_LIVROS+"-"+link.split("/").pop(),
 directory:"CACHE"
 });
 
