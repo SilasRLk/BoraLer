@@ -3396,7 +3396,7 @@ async function prepararLivroNoAparelhoInterno(url,texto){
 
 const FS=pluginArquivos();
 
-const nome="livros/"+url.split("/").pop();
+const nome="livro-"+url.split("/").pop();
 
 const dir="CACHE";
 
@@ -3772,7 +3772,7 @@ try{
 if(urlLocal&&pluginArquivos()){
 
 pluginArquivos().deleteFile({
-path:"livros/"+link.split("/").pop(),
+path:"livro-"+link.split("/").pop(),
 directory:"CACHE"
 });
 
