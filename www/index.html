@@ -3343,6 +3343,10 @@ let _pdfAbortController=null;
 
 let _pdfCanceladoPeloUsuario=false;
 
+let _pdfSessao=0;
+
+const _downloadsEmAndamento={};
+
 
 function pluginArquivos(){
 
@@ -3363,7 +3367,32 @@ return null;
 }
 
 
-async function prepararLivroNoAparelho(url,texto){
+function prepararLivroNoAparelho(url,texto){
+
+/*
+   Se o mesmo livro já está sendo baixado
+   (a pessoa saiu e entrou de novo), usa o
+   mesmo download em vez de começar outro.
+*/
+
+if(!_downloadsEmAndamento[url]){
+
+_downloadsEmAndamento[url]=
+prepararLivroNoAparelhoInterno(url,texto)
+.finally(function(){
+
+delete _downloadsEmAndamento[url];
+
+});
+
+}
+
+return _downloadsEmAndamento[url];
+
+}
+
+
+async function prepararLivroNoAparelhoInterno(url,texto){
 
 const FS=pluginArquivos();
 
@@ -3462,6 +3491,8 @@ return Capacitor.convertFileSrc(r.uri);
 
 async function abrirPDF(link,materia){
 
+const minhaSessao=++_pdfSessao;
+
 if(!link){
 
 mostrarToast(
@@ -3494,6 +3525,8 @@ document.getElementById("pdfCarregando");
 
 const carregandoTexto=
 document.getElementById("pdfCarregandoTexto");
+
+document.getElementById("pdfCancelarBtn").innerText="Cancelar";
 
 const frame=
 document.getElementById("pdfFrame");
@@ -3597,7 +3630,7 @@ link,
 carregandoTexto
 );
 
-if(_pdfCanceladoPeloUsuario){
+if(minhaSessao!==_pdfSessao){
 
 return;
 
@@ -3678,12 +3711,24 @@ carregandoTexto.innerText=
    app, sem internet, instantâneo.
 */
 
+if(minhaSessao!==_pdfSessao){
+
+return;
+
+}
+
 const documento=
 urlLocal?
 await pdfjsLib.getDocument({url:urlLocal}).promise:
 ehLinkRemoto?
 await pdfjsLib.getDocument({data:bytes}).promise:
 await pdfjsLib.getDocument(link).promise;
+
+if(minhaSessao!==_pdfSessao){
+
+return;
+
+}
 
 _pdfDocumentoAtual=documento;
 
@@ -3705,7 +3750,7 @@ await renderizarPaginaPDF();
 _pdfAbortController=null;
 
 
-if(_pdfCanceladoPeloUsuario){
+if(minhaSessao!==_pdfSessao){
 
 /*
    A pessoa mesma cancelou — a tela já
@@ -3735,11 +3780,30 @@ directory:"CACHE"
 
 }catch(e2){}
 
-carregando.style.display="none";
+/*
+   Mostra o motivo real na tela (em vez
+   de uma mensagem genérica), pra gente
+   saber exatamente o que aconteceu.
+*/
 
-mostrarToast(
-"Não foi possível abrir esse livro."
-);
+let detalhe="";
+
+try{
+
+detalhe=
+(e&&e.message)?e.message:String(e);
+
+}catch(e3){}
+
+carregando.style.display="flex";
+
+carregandoTexto.innerText=
+"Não foi possível abrir este livro.\n"+
+"Motivo: "+detalhe;
+
+document.getElementById(
+"pdfCancelarBtn"
+).innerText="Voltar";
 
 }
 
@@ -3866,6 +3930,10 @@ FECHAR PDF
 ================================================== */
 
 function fecharPDF(){
+
+_pdfSessao++;
+
+_pdfCanceladoPeloUsuario=true;
 
 if(_pdfAbortController){
 
@@ -4256,7 +4324,7 @@ LEMBRETE (notificação local)
    número abaixo (em horas).
 ================================================== */
 
-const HORAS_LEMBRETE=1;
+const HORAS_LEMBRETE=3;
 
 
 function pluginNotificacao(){
