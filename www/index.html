@@ -2472,38 +2472,6 @@ document.getElementById("msg")
 
 return;
 
-}
-
-
-const botao=
-document.getElementById(
-"btnCriarConta"
-);
-
-botao.disabled=true;
-
-botao.innerText=
-"Verificando...";
-
-const jaUsado=
-await emailJaFoiUsado(email);
-
-botao.disabled=false;
-
-botao.innerText=
-"CRIAR CONTA";
-
-
-if(jaUsado){
-
-document.getElementById("msg")
-.innerText=
-"Esse e-mail já criou uma conta antes. Use outro e-mail ou toque em Entrar.";
-
-return;
-
-}
-
 
 registrarEmailNoServidor(email);
 
