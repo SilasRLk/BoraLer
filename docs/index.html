@@ -1,0 +1,4934 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>Boraler</title>
+
+<style>
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+body{
+margin:0;
+background:#080808;
+color:#fff;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+-webkit-font-smoothing:antialiased;
+}
+
+button,input{
+font:inherit;
+}
+
+button{
+cursor:pointer;
+}
+
+:root{
+--gold:#f5c542;
+--gold2:#ffdd70;
+--dark:#080808;
+--card:#121212;
+--card2:#181818;
+--border:#292929;
+--muted:#999;
+}
+
+/* LOGIN */
+
+.login{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:22px;
+background:
+radial-gradient(circle at 50% 0%,#5a4300 0%,#171200 20%,#080808 55%);
+}
+
+.loginBox{
+width:100%;
+max-width:410px;
+padding:30px 24px;
+background:rgba(15,15,15,.96);
+border:1px solid #594900;
+border-radius:30px;
+box-shadow:0 20px 70px #000;
+}
+
+.brandLogin{
+text-align:center;
+margin-bottom:22px;
+position:relative;
+padding-top:6px;
+}
+
+@keyframes orb-spin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+@keyframes orb-sheen{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes orb-outerRing{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+@keyframes orb-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes orb-twinkle{0%,100%{opacity:.15}50%{opacity:.8}}
+@keyframes orb-glowPulse{
+0%,100%{opacity:.35;transform:translate(-50%,-50%) scale(1)}
+50%{opacity:.55;transform:translate(-50%,-50%) scale(1.08)}
+}
+@keyframes orb-fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes orb-popIn{
+0%{opacity:0;transform:translateX(-50%) scale(.4)}
+70%{opacity:1;transform:translateX(-50%) scale(1.08)}
+100%{transform:translateX(-50%) scale(1)}
+}
+@keyframes orb-shimmer{0%{background-position:-120% 0}100%{background-position:220% 0}}
+
+.orb-stage{
+position:relative;
+height:190px;
+overflow:hidden;
+}
+
+.orb-glow{
+position:absolute;
+top:70px;
+left:50%;
+width:200px;
+height:200px;
+background:radial-gradient(circle,rgba(245,197,66,.35),transparent 70%);
+animation:orb-glowPulse 4s ease-in-out infinite;
+pointer-events:none;
+}
+
+.orb-star{
+position:absolute;
+border-radius:50%;
+background:#ffdd70;
+animation:orb-twinkle 2.6s ease-in-out infinite;
+}
+
+.orb-shadow{
+width:170px;
+height:60px;
+border-radius:50%;
+background:rgba(0,0,0,.35);
+margin:0 auto;
+position:relative;
+top:130px;
+}
+
+.orb-wrap{
+perspective:1000px;
+width:210px;
+height:190px;
+position:relative;
+margin:0 auto;
+}
+
+.orb-outer{
+position:absolute;
+top:2px;
+left:2px;
+width:206px;
+height:206px;
+transform-style:preserve-3d;
+transform:rotateX(58deg);
+}
+
+.orb-outer-line{
+position:absolute;
+inset:0;
+border-radius:50%;
+border:1px dashed rgba(245,197,66,.25);
+animation:orb-outerRing 22s linear infinite;
+}
+
+.orb-ring{
+position:absolute;
+top:22px;
+left:22px;
+width:166px;
+height:166px;
+transform-style:preserve-3d;
+transform:rotateX(58deg);
+}
+
+.orb-ring-line{
+position:absolute;
+inset:0;
+border-radius:50%;
+border:1px solid rgba(245,197,66,.4);
+}
+
+.orb-sat{
+position:absolute;
+top:75px;
+left:75px;
+width:22px;
+height:22px;
+border-radius:50%;
+background:#0e0e0e;
+border:1.5px solid var(--gold);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:11px;
+}
+
+.orb-coin-pos{
+position:absolute;
+top:54px;
+left:50%;
+perspective:600px;
+animation:orb-bob 3.6s ease-in-out infinite,orb-popIn 650ms cubic-bezier(.3,1.6,.4,1) 650ms both;
+}
+
+.orb-coin{
+transform-style:preserve-3d;
+width:72px;
+height:72px;
+border-radius:50%;
+background:radial-gradient(circle at 32% 26%,#fff6d9,#f5c542 42%,#b3861a 100%);
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px solid #ffe9a8;
+position:relative;
+overflow:hidden;
+animation:orb-spin 7s linear infinite;
+}
+
+.orb-coin-sheen{
+position:absolute;
+inset:-20%;
+background:conic-gradient(from 0deg,transparent 0deg,rgba(255,255,255,.5) 18deg,transparent 40deg,transparent 360deg);
+animation:orb-sheen 3.5s linear infinite;
+}
+
+.orb-coin-letter{
+position:relative;
+font-size:26px;
+font-weight:900;
+color:#3a2c05;
+}
+
+.orb-wordmark{
+animation:orb-fadeUp 700ms ease-out 1150ms both;
+}
+
+.orb-shimmer-text{
+background:linear-gradient(90deg,var(--gold) 0%,#fff2c4 12%,var(--gold) 24%,var(--gold) 100%);
+background-size:250% 100%;
+-webkit-background-clip:text;
+background-clip:text;
+color:transparent;
+font-size:27px;
+font-weight:900;
+letter-spacing:4px;
+display:inline-block;
+animation:orb-shimmer 2.8s ease-in-out 1150ms 1;
+}
+
+/* CAMPOS */
+
+.field{
+width:100%;
+padding:15px;
+margin:7px 0;
+background:#181818;
+border:1px solid #303030;
+border-radius:14px;
+color:#fff;
+outline:none;
+}
+
+.field:focus{
+border-color:var(--gold);
+}
+
+.btn{
+border:0;
+border-radius:100px;
+padding:14px 22px;
+font-weight:bold;
+background:var(--gold);
+color:#111;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+}
+
+.btnDark{
+background:#242424;
+color:#fff;
+}
+
+.full{
+width:100%;
+margin-top:10px;
+}
+
+.msg{
+min-height:20px;
+text-align:center;
+font-size:13px;
+color:#ff7777;
+}
+
+/* APP */
+
+.app{
+display:none;
+min-height:100vh;
+padding-bottom:88px;
+}
+
+header{
+position:sticky;
+top:0;
+z-index:20;
+background:rgba(8,8,8,.94);
+backdrop-filter:blur(14px);
+border-bottom:1px solid #222;
+padding-top:env(safe-area-inset-top);
+}
+
+.header{
+height:68px;
+max-width:760px;
+margin:auto;
+padding:0 18px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.headerBrand{
+font-size:25px;
+font-weight:900;
+letter-spacing:-1px;
+color:var(--gold);
+}
+
+.headerBrand span{
+color:#fff;
+}
+
+.headerUser{
+width:42px;
+height:42px;
+border-radius:50%;
+background:var(--gold);
+color:#111;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.page{
+width:100%;
+max-width:760px;
+margin:auto;
+padding:20px 17px;
+}
+
+.section{
+display:none;
+animation:show .25s ease;
+}
+
+.section.active{
+display:block;
+}
+
+@keyframes show{
+from{
+opacity:0;
+transform:translateY(8px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+/* TITLES */
+
+.pageTitle{
+font-size:28px;
+margin:4px 0 5px;
+}
+
+.pageSub{
+color:var(--muted);
+font-size:14px;
+margin:0 0 20px;
+}
+
+/* HOME */
+
+.welcome{
+margin-bottom:18px;
+}
+
+.welcome h1{
+font-size:27px;
+margin:0;
+}
+
+.muted{
+color:var(--muted);
+}
+
+.gold{
+color:var(--gold);
+}
+
+.hero{
+padding:21px;
+border-radius:24px;
+border:1px solid #514300;
+background:
+radial-gradient(circle at 100% 0%,#604b00 0,transparent 34%),
+linear-gradient(135deg,#1b180b,#111);
+margin-bottom:16px;
+}
+
+.heroTag{
+font-size:12px;
+color:var(--gold);
+font-weight:bold;
+text-transform:uppercase;
+letter-spacing:1px;
+}
+
+.hero h2{
+margin:8px 0;
+font-size:22px;
+}
+
+.hero p{
+color:#aaa;
+font-size:14px;
+line-height:1.5;
+}
+
+.heroButtons{
+display:flex;
+gap:9px;
+margin-top:17px;
+}
+
+.heroButtons button{
+flex:1;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:9px;
+margin-bottom:17px;
+}
+
+.stat{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:17px;
+padding:14px 5px;
+text-align:center;
+}
+
+.stat strong{
+display:block;
+font-size:22px;
+color:var(--gold);
+}
+
+.stat small{
+color:#888;
+}
+
+/* CARDS */
+
+.card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:20px;
+padding:17px;
+margin-bottom:14px;
+}
+
+.cardHead{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+}
+
+.cardHead h3{
+margin:0;
+}
+
+/* PROGRESS */
+
+.progress{
+height:9px;
+background:#292929;
+border-radius:20px;
+overflow:hidden;
+}
+
+.progress span{
+display:block;
+height:100%;
+width:0;
+background:linear-gradient(90deg,var(--gold),var(--gold2));
+border-radius:20px;
+transition:.4s;
+}
+
+.progressText{
+color:#888;
+font-size:12px;
+margin-top:7px;
+}
+
+/* SUBJECTS */
+
+.subjectGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+}
+
+.subject{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:16px;
+padding:18px 8px;
+text-align:center;
+}
+
+.subject:active{
+transform:scale(.97);
+}
+
+.subjectIcon{
+font-size:34px;
+margin-bottom:9px;
+}
+
+.subjectName{
+font-weight:bold;
+}
+
+.subjectDesc{
+font-size:11px;
+color:#777;
+margin-top:5px;
+}
+
+/* YEARS */
+
+.yearGrid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+margin-bottom:18px;
+}
+
+.year{
+border:1px solid #292929;
+background:#141414;
+color:#fff;
+border-radius:18px;
+padding:18px;
+text-align:center;
+font-weight:bold;
+}
+
+.year.active{
+background:var(--gold);
+color:#111;
+border-color:var(--gold);
+}
+
+.year small{
+display:block;
+font-weight:normal;
+opacity:.65;
+margin-top:4px;
+}
+
+/* LIBRARY */
+
+.search{
+width:100%;
+padding:15px;
+background:#151515;
+border:1px solid #303030;
+border-radius:15px;
+color:#fff;
+outline:none;
+margin-bottom:15px;
+}
+
+.material{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:15px;
+margin-bottom:10px;
+}
+
+.materialTop{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.materialIcon{
+width:46px;
+height:46px;
+border-radius:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#282000;
+font-size:23px;
+}
+
+.material h3{
+margin:0 0 4px;
+}
+
+.material p{
+margin:0;
+color:#777;
+font-size:12px;
+}
+
+.pdfBtn{
+display:block;
+text-align:center;
+text-decoration:none;
+background:var(--gold);
+color:#111;
+font-weight:bold;
+padding:12px;
+border-radius:12px;
+margin-top:12px;
+}
+
+.emptyPdf{
+margin-top:12px;
+padding:11px;
+background:#191919;
+border-radius:11px;
+color:#777;
+font-size:12px;
+text-align:center;
+}
+
+/* TASKS */
+
+.task{
+display:flex;
+gap:12px;
+align-items:flex-start;
+}
+
+.task input{
+width:20px;
+height:20px;
+accent-color:var(--gold);
+margin-top:2px;
+}
+
+.taskText{
+flex:1;
+}
+
+.taskText h3{
+margin:0 0 5px;
+font-size:15px;
+}
+
+.taskText p{
+margin:0;
+color:#777;
+font-size:12px;
+}
+
+.done{
+text-decoration:line-through;
+opacity:.45;
+}
+
+.addTaskRow{
+display:flex;
+gap:8px;
+margin-bottom:14px;
+}
+
+.addTaskRow input{
+flex:1;
+margin:0;
+}
+
+.addTaskRow button{
+border:0;
+background:var(--gold);
+color:#111;
+border-radius:12px;
+padding:0 20px;
+font-weight:bold;
+font-size:22px;
+line-height:1;
+}
+
+.taskDelete{
+border:0;
+background:none;
+color:#777;
+font-size:19px;
+padding:2px 4px;
+line-height:1;
+align-self:flex-start;
+}
+
+.taskEmpty{
+color:#777;
+font-size:13px;
+text-align:center;
+padding:20px 0;
+}
+
+.notesArea{
+width:100%;
+min-height:130px;
+background:#181818;
+border:1px solid #303030;
+border-radius:14px;
+color:#fff;
+padding:14px;
+font-family:inherit;
+font-size:13px;
+line-height:1.5;
+resize:vertical;
+outline:none;
+box-sizing:border-box;
+}
+
+.notesSaved{
+font-size:11px;
+color:#777;
+margin-top:6px;
+text-align:right;
+min-height:14px;
+}
+
+.rankRow{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px 14px;
+background:var(--card);
+border:1px solid var(--border);
+border-radius:14px;
+margin-bottom:8px;
+}
+
+.rankRow.rankMe{
+border-color:var(--gold);
+background:#1c1704;
+}
+
+.rankPos{
+width:26px;
+font-weight:bold;
+color:var(--gold);
+font-size:13px;
+}
+
+.rankNome{
+flex:1;
+font-size:13px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+
+.rankXp{
+font-size:12px;
+font-weight:bold;
+color:var(--gold);
+}
+
+/* LEVEL */
+
+.levelBox{
+text-align:center;
+padding:25px;
+border-radius:24px;
+background:
+radial-gradient(circle,#3b2d00,#121212 60%);
+border:1px solid #574800;
+margin-bottom:15px;
+}
+
+.levelCircle{
+width:120px;
+height:120px;
+border:7px solid var(--gold);
+border-radius:50%;
+margin:auto;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+.levelCircle strong{
+font-size:35px;
+color:var(--gold);
+}
+
+.levelCircle small{
+color:#888;
+}
+
+/* PROFILE */
+
+.profile{
+text-align:center;
+margin-bottom:20px;
+}
+
+.avatar{
+width:94px;
+height:94px;
+border-radius:50%;
+background:var(--gold);
+color:#111;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:37px;
+font-weight:bold;
+margin:auto;
+overflow:hidden;
+position:relative;
+}
+
+.avatar img,
+.headerUser img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:50%;
+}
+
+.avatarEditBtn{
+position:absolute;
+bottom:-2px;
+right:calc(50% - 47px);
+width:30px;
+height:30px;
+border-radius:50%;
+background:#181818;
+border:2px solid var(--dark);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:13px;
+}
+
+.nomeLinha{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+}
+
+.nomeEditBtn{
+border:0;
+background:none;
+color:#888;
+font-size:14px;
+padding:4px;
+}
+
+.editNomeRow{
+display:none;
+gap:8px;
+margin-top:10px;
+}
+
+.editNomeRow.on{
+display:flex;
+}
+
+.editNomeRow input{
+flex:1;
+margin:0;
+}
+
+.editNomeRow button{
+border:0;
+background:var(--gold);
+color:#111;
+border-radius:12px;
+padding:0 16px;
+font-weight:bold;
+font-size:13px;
+}
+
+.rankFoto{
+width:28px;
+height:28px;
+border-radius:50%;
+object-fit:cover;
+flex-shrink:0;
+}
+
+.rankFotoLetra{
+width:28px;
+height:28px;
+border-radius:50%;
+background:#222;
+color:var(--gold);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+font-weight:bold;
+flex-shrink:0;
+}
+
+.rankRetryBtn{
+display:block;
+margin:10px auto 0;
+border:1px solid #444;
+background:none;
+color:#ccc;
+border-radius:100px;
+padding:9px 20px;
+font-size:12px;
+}
+
+/* SETTINGS */
+
+.setting{
+display:flex;
+justify-content:space-between;
+padding:16px 2px;
+border-bottom:1px solid #252525;
+}
+
+.setting:last-child{
+border:0;
+}
+
+/* HELP */
+
+.help{
+display:grid;
+gap:9px;
+}
+
+.help button{
+background:#171717;
+border:1px solid #292929;
+color:#fff;
+padding:16px;
+border-radius:14px;
+text-align:left;
+}
+
+/* BOTTOM */
+
+.bottom{
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+height:calc(76px + env(safe-area-inset-bottom));
+padding-bottom:env(safe-area-inset-bottom);
+display:flex;
+background:rgba(13,13,13,.97);
+border-top:1px solid #292929;
+z-index:100;
+}
+
+.bottom button{
+flex:1;
+border:0;
+background:none;
+color:#777;
+font-size:10px;
+}
+
+.bottom button.active{
+color:var(--gold);
+}
+
+.bottom b{
+display:block;
+font-size:20px;
+margin-bottom:3px;
+}
+
+/* PDF */
+
+.pdfReader{
+display:none;
+position:fixed;
+inset:0;
+z-index:9999;
+background:#050505;
+}
+
+.pdfHeader{
+height:62px;
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px;
+background:#111;
+border-bottom:1px solid #333;
+}
+
+.pdfBack{
+background:var(--gold);
+border:0;
+border-radius:10px;
+padding:9px 13px;
+font-weight:bold;
+}
+
+.pdfTitle{
+font-size:14px;
+font-weight:bold;
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis;
+}
+
+.pdfFrame{
+width:100%;
+height:calc(100vh - 62px);
+border:0;
+background:white;
+}
+
+.pdfPaginas{
+height:calc(100vh - 62px - 56px);
+overflow-y:auto;
+background:#1a1a1a;
+padding:10px 0 30px;
+box-sizing:border-box;
+-webkit-overflow-scrolling:touch;
+}
+
+.pdfNav{
+height:56px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+padding:0 14px;
+background:#111;
+border-top:1px solid #292929;
+}
+
+.pdfNav button{
+border:0;
+background:var(--gold);
+color:#111;
+border-radius:100px;
+padding:10px 16px;
+font-weight:bold;
+font-size:12px;
+white-space:nowrap;
+}
+
+.pdfNav button:disabled{
+opacity:.35;
+}
+
+.pdfNav span{
+color:#ccc;
+font-size:12px;
+white-space:nowrap;
+}
+
+.pdfPaginas canvas{
+display:block;
+margin:0 auto 10px;
+max-width:100%;
+height:auto;
+box-shadow:0 2px 10px rgba(0,0,0,.4);
+}
+
+.pdfCarregando{
+height:calc(100vh - 62px);
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:18px;
+color:#888;
+font-size:14px;
+text-align:center;
+padding:0 30px;
+}
+
+.pdfCancelarBtn{
+border:1px solid #444;
+background:none;
+color:#ccc;
+border-radius:100px;
+padding:10px 22px;
+font-size:13px;
+}
+
+/* TOAST */
+
+.toast{
+position:fixed;
+left:50%;
+bottom:90px;
+transform:translateX(-50%);
+background:var(--gold);
+color:#111;
+padding:12px 17px;
+border-radius:13px;
+font-weight:bold;
+font-size:13px;
+display:none;
+z-index:10000;
+}
+
+/* MOBILE */
+
+@media(max-width:380px){
+
+.headerBrand{
+font-size:22px;
+}
+
+.pageTitle{
+font-size:25px;
+}
+
+.bottom button{
+font-size:9px;
+}
+
+.bottom b{
+font-size:18px;
+}
+
+}
+</style>
+
+<!--
+  SDK do Supabase — usado só pelo Ranking online.
+  Carregado pelo jsdelivr, funciona offline sem erro
+  (só o ranking depende de internet pra funcionar).
+-->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!--
+  PDF.js — renderiza o PDF de verdade dentro do
+  app, sem usar a tela do Google Drive. Assim a
+  pessoa nunca é levada pra fora do Boraler.
+-->
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+
+</head>
+
+<body>
+
+<!-- ==================================================
+LOGIN
+================================================== -->
+
+<div id="login" class="login">
+
+<div class="loginBox">
+
+<div class="brandLogin">
+
+<div class="orb-stage">
+
+<div class="orb-glow"></div>
+
+<div class="orb-star" style="top:14px;left:20%;width:3px;height:3px;animation-delay:.2s;"></div>
+<div class="orb-star" style="top:40px;left:78%;width:2px;height:2px;animation-delay:1s;"></div>
+<div class="orb-star" style="top:6px;left:60%;width:2px;height:2px;animation-delay:1.8s;"></div>
+<div class="orb-star" style="top:96px;left:10%;width:2px;height:2px;animation-delay:.6s;"></div>
+<div class="orb-star" style="top:100px;left:88%;width:3px;height:3px;animation-delay:1.4s;"></div>
+
+<div class="orb-shadow"></div>
+
+<div class="orb-wrap">
+
+<div class="orb-outer">
+<div class="orb-outer-line"></div>
+</div>
+
+<div id="orbRing" class="orb-ring">
+<div class="orb-ring-line"></div>
+<div id="orbSat0" class="orb-sat">📖</div>
+<div id="orbSat1" class="orb-sat">✓</div>
+<div id="orbSat2" class="orb-sat">🏆</div>
+</div>
+
+<div class="orb-coin-pos">
+<div class="orb-coin">
+<div class="orb-coin-sheen"></div>
+<span class="orb-coin-letter">B</span>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="orb-wordmark">
+<div class="orb-shimmer-text">BORALER</div>
+<div class="slogan">
+Aprenda no seu ritmo. Evolua todos os dias.
+</div>
+</div>
+
+</div>
+
+<input
+id="nomeCadastro"
+class="field"
+placeholder="Seu nome"
+>
+
+<input
+id="email"
+class="field"
+type="email"
+placeholder="Seu e-mail"
+>
+
+<input
+id="senha"
+class="field"
+type="password"
+placeholder="Sua senha"
+>
+
+<button
+id="btnCriarConta"
+class="btn full"
+onclick="cadastrar()"
+>
+CRIAR CONTA
+</button>
+
+<button
+class="btn btnDark full"
+onclick="entrar()"
+>
+ENTRAR
+</button>
+
+<p id="msg" class="msg"></p>
+
+</div>
+
+</div>
+
+
+<!-- ==================================================
+APP
+================================================== -->
+
+<div id="app" class="app">
+
+<header>
+
+<div class="header">
+
+<div class="headerBrand">
+BOR<span>ALER</span> 📚
+</div>
+
+<div
+id="avatarMini"
+class="headerUser"
+>
+B
+</div>
+
+</div>
+
+</header>
+
+
+<main class="page">
+
+
+<!-- ==================================================
+INÍCIO
+================================================== -->
+
+<section
+id="inicio"
+class="section active"
+>
+
+<div class="welcome">
+
+<h1>
+Olá, <span id="nomeHome" class="gold">
+estudante
+</span> 👋
+</h1>
+
+<p class="muted">
+Vamos continuar seus estudos?
+</p>
+
+</div>
+
+
+<div class="hero">
+
+<div class="heroTag">
+BORALER • ESTUDOS
+</div>
+
+<h2>
+🚀 O próximo capítulo é seu
+</h2>
+
+<p>
+Leia seus materiais, faça suas tarefas e acompanhe sua evolução.
+</p>
+
+<div class="progress">
+<span id="barraHome"></span>
+</div>
+
+<div
+id="textoHome"
+class="progressText"
+>
+0% concluído
+</div>
+
+<div class="heroButtons">
+
+<button
+class="btn"
+onclick="pagina('biblioteca')"
+>
+📖 Livros
+</button>
+
+<button
+class="btn btnDark"
+onclick="pagina('tarefas')"
+>
+📝 Tarefas
+</button>
+
+</div>
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+<strong id="statTarefas">0</strong>
+<small>Tarefas</small>
+</div>
+
+<div class="stat">
+<strong>5</strong>
+<small>Matérias</small>
+</div>
+
+<div class="stat">
+<strong id="statXp">0</strong>
+<small>XP</small>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="cardHead">
+
+<h3>🎓 Comece por aqui</h3>
+
+<span class="gold">
+Boraler
+</span>
+
+</div>
+
+<p class="muted">
+Escolha sua série e encontre seus livros na biblioteca.
+</p>
+
+</div>
+
+
+<h2>
+📚 Matérias
+</h2>
+
+<div class="subjectGrid">
+
+<div
+class="subject"
+onclick="abrirMateria('Português')"
+>
+<div class="subjectIcon">📖</div>
+<div class="subjectName">Português</div>
+<div class="subjectDesc">Linguagem e literatura</div>
+</div>
+
+<div
+class="subject"
+onclick="abrirMateria('Matemática')"
+>
+<div class="subjectIcon">📐</div>
+<div class="subjectName">Matemática</div>
+<div class="subjectDesc">Números e lógica</div>
+</div>
+
+<div
+class="subject"
+onclick="abrirMateria('História')"
+>
+<div class="subjectIcon">📜</div>
+<div class="subjectName">História</div>
+<div class="subjectDesc">Conheça o passado</div>
+</div>
+
+<div
+class="subject"
+onclick="abrirMateria('Geografia')"
+>
+<div class="subjectIcon">🌎</div>
+<div class="subjectName">Geografia</div>
+<div class="subjectDesc">Mundo e espaço</div>
+</div>
+
+<div
+class="subject"
+onclick="abrirMateria('Ciências')"
+>
+<div class="subjectIcon">🔬</div>
+<div class="subjectName">Ciências</div>
+<div class="subjectDesc">Descubra como funciona</div>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ==================================================
+BIBLIOTECA
+================================================== -->
+
+<section
+id="biblioteca"
+class="section"
+>
+
+<h1 class="pageTitle">
+📚 Biblioteca
+</h1>
+
+<p class="pageSub">
+Escolha sua série e encontre seus materiais.
+</p>
+
+
+<div class="yearGrid">
+
+<button
+class="year active"
+onclick="selecionarAno(6,this)"
+>
+6º ANO
+<small>Ensino Fundamental</small>
+</button>
+
+<button
+class="year"
+onclick="selecionarAno(7,this)"
+>
+7º ANO
+<small>Ensino Fundamental</small>
+</button>
+
+<button
+class="year"
+onclick="selecionarAno(8,this)"
+>
+8º ANO
+<small>Ensino Fundamental</small>
+</button>
+
+<button
+class="year"
+onclick="selecionarAno(9,this)"
+>
+9º ANO
+<small>Ensino Fundamental</small>
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h3 id="tituloSerie">
+📚 Materiais do 6º ano
+</h3>
+
+<p class="muted">
+Selecione uma matéria para abrir o livro.
+</p>
+
+</div>
+
+
+<input
+id="pesquisa"
+class="search"
+placeholder="🔎 Pesquisar matéria..."
+oninput="pesquisar()"
+>
+
+
+<div id="listaMateriais">
+
+<div
+class="material"
+data-nome="Português"
+>
+<div class="materialTop">
+
+<div class="materialIcon">
+📖
+</div>
+
+<div>
+<h3>Português</h3>
+<p>Livro e materiais de Português</p>
+</div>
+
+</div>
+
+<div id="pdf-portugues"></div>
+
+</div>
+
+
+<div
+class="material"
+data-nome="Matemática"
+>
+<div class="materialTop">
+
+<div class="materialIcon">
+📐
+</div>
+
+<div>
+<h3>Matemática</h3>
+<p>Livro e materiais de Matemática</p>
+</div>
+
+</div>
+
+<div id="pdf-matematica"></div>
+
+</div>
+
+
+<div
+class="material"
+data-nome="História"
+>
+<div class="materialTop">
+
+<div class="materialIcon">
+📜
+</div>
+
+<div>
+<h3>História</h3>
+<p>Livro e materiais de História</p>
+</div>
+
+</div>
+
+<div id="pdf-historia"></div>
+
+</div>
+
+
+<div
+class="material"
+data-nome="Geografia"
+>
+<div class="materialTop">
+
+<div class="materialIcon">
+🌎
+</div>
+
+<div>
+<h3>Geografia</h3>
+<p>Livro e materiais de Geografia</p>
+</div>
+
+</div>
+
+<div id="pdf-geografia"></div>
+
+</div>
+
+
+<div
+class="material"
+data-nome="Ciências"
+>
+<div class="materialTop">
+
+<div class="materialIcon">
+🔬
+</div>
+
+<div>
+<h3>Ciências</h3>
+<p>Livro e materiais de Ciências</p>
+</div>
+
+</div>
+
+<div id="pdf-ciencias"></div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ==================================================
+TAREFAS
+================================================== -->
+
+<section
+id="tarefas"
+class="section"
+>
+
+<h1 class="pageTitle">
+📝 Tarefas
+</h1>
+
+<p class="pageSub">
+Complete suas atividades e ganhe XP.
+</p>
+
+
+<div class="hero">
+
+<div class="heroTag">
+META DE HOJE
+</div>
+
+<h2>
+🎯 Faltam poucas para hoje
+</h2>
+
+<div class="progress">
+<span id="barraTarefas"></span>
+</div>
+
+<div
+id="textoTarefas"
+class="progressText"
+>
+0 de 0 concluídas
+</div>
+
+</div>
+
+
+<div class="addTaskRow">
+<input
+id="novaTarefaInput"
+class="field"
+placeholder="Digite uma nova tarefa..."
+onkeydown="if(event.key==='Enter')adicionarTarefaNova()"
+>
+<button onclick="adicionarTarefaNova()">+</button>
+</div>
+
+<p style="color:#666;font-size:11px;margin:-8px 0 14px;">
+⏳ Uma tarefa só pode ser marcada como concluída depois de um tempinho — isso evita trapaça.
+</p>
+
+
+<div id="listaTarefas"></div>
+
+</section>
+
+
+<!-- ==================================================
+PROGRESSO
+================================================== -->
+
+<section
+id="progresso"
+class="section"
+>
+
+<h1 class="pageTitle">
+🏆 Progresso
+</h1>
+
+<p class="pageSub">
+Veja o quanto você já evoluiu.
+</p>
+
+
+<div class="levelBox">
+
+<div class="levelCircle">
+
+<strong id="nivel">
+1
+</strong>
+
+<small>
+NÍVEL
+</small>
+
+</div>
+
+<h3 id="xpTexto">
+0 / 100 XP
+</h3>
+
+<div class="progress">
+<span id="barraXp"></span>
+</div>
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+<strong id="progTarefas">0</strong>
+<small>Tarefas</small>
+</div>
+
+<div class="stat">
+<strong id="progPercent">0%</strong>
+<small>Conclusão</small>
+</div>
+
+<div class="stat">
+<strong id="progXp">0</strong>
+<small>XP</small>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+🏆 Ranking
+</h3>
+
+<p style="color:#777;font-size:12px;margin-top:-4px;margin-bottom:10px;">
+Top 20 por XP. Precisa de internet pra funcionar.
+</p>
+
+<div id="rankingLista"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+🗒️ Anotações
+</h3>
+
+<p style="color:#777;font-size:12px;margin-top:-4px;margin-bottom:10px;">
+Escreva o que quiser. Fica salvo neste aparelho.
+</p>
+
+<textarea
+id="anotacoesArea"
+class="notesArea"
+placeholder="Ex: revisar capítulo 3 de História, levar dúvida de Matemática pra próxima aula..."
+oninput="salvarAnotacoes()"
+></textarea>
+
+<div id="anotacoesSalvo" class="notesSaved"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+📝 Minhas tarefas
+</h3>
+
+<div class="addTaskRow">
+<input
+id="novaTarefaInputProgresso"
+class="field"
+placeholder="Digite uma nova tarefa..."
+onkeydown="if(event.key==='Enter')adicionarTarefaNova('progresso')"
+>
+<button onclick="adicionarTarefaNova('progresso')">+</button>
+</div>
+
+<p style="color:#666;font-size:11px;margin:-8px 0 14px;">
+⏳ Uma tarefa só pode ser marcada como concluída depois de um tempinho — isso evita trapaça.
+</p>
+
+<div id="listaTarefasProgresso"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+🏅 Conquistas
+</h3>
+
+<p>
+🌱 Primeiro passo
+</p>
+
+<p>
+🎓 Estudante
+</p>
+
+<p>
+🔥 Em evolução
+</p>
+
+</div>
+
+</section>
+
+
+<!-- ==================================================
+PERFIL
+================================================== -->
+
+<section
+id="perfil"
+class="section"
+>
+
+<h1 class="pageTitle">
+👤 Meu perfil
+</h1>
+
+<p class="pageSub">
+Suas informações no Boraler.
+</p>
+
+
+<div class="profile">
+
+<div style="position:relative;width:94px;margin:auto;">
+
+<div
+id="avatarGrande"
+class="avatar"
+onclick="escolherFoto()"
+>
+B
+</div>
+
+<button
+class="avatarEditBtn"
+onclick="escolherFoto()"
+>
+✏️
+</button>
+
+</div>
+
+<input
+type="file"
+id="fotoInput"
+accept="image/*"
+style="display:none;"
+onchange="fotoSelecionada(this)"
+>
+
+<div class="nomeLinha">
+<h2 id="nomePerfil">
+Estudante
+</h2>
+<button
+class="nomeEditBtn"
+onclick="editarNome()"
+>
+✏️
+</button>
+</div>
+
+<div id="editNomeRow" class="editNomeRow">
+<input
+type="text"
+id="novoNomeInput"
+class="field"
+placeholder="Seu nome"
+>
+<button onclick="salvarNome()">Salvar</button>
+</div>
+
+<p
+id="emailPerfil"
+class="muted"
+>
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+📊 Estatísticas
+</h3>
+
+<p>
+📝 Tarefas concluídas:
+<b id="perfilTarefas">0</b>
+</p>
+
+<p>
+⭐ XP:
+<b id="perfilXp">0</b>
+</p>
+
+<p>
+🏆 Nível:
+<b id="perfilNivel">1</b>
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+⚙️ Configurações
+</h3>
+
+<div class="setting">
+<span>🌙 Tema</span>
+<b class="gold">Escuro</b>
+</div>
+
+<div class="setting">
+<span>📱 Plataforma</span>
+<b>Android</b>
+</div>
+
+<div class="setting">
+<span>📚 Versão</span>
+<b>1.0</b>
+</div>
+
+</div>
+
+
+<button
+class="btn btnDark full"
+onclick="sair()"
+>
+🚪 SAIR DA CONTA
+</button>
+
+</section>
+
+
+<!-- ==================================================
+AJUDA
+================================================== -->
+
+<section
+id="ajuda"
+class="section"
+>
+
+<h1 class="pageTitle">
+❓ Ajuda
+</h1>
+
+<p class="pageSub">
+Veja como usar o Boraler.
+</p>
+
+
+<div class="help">
+
+<button
+onclick="mostrarAjuda('livros')"
+>
+📚 Como encontrar meus livros?
+</button>
+
+<button
+onclick="mostrarAjuda('pdf')"
+>
+📄 Como abrir um PDF?
+</button>
+
+<button
+onclick="mostrarAjuda('tarefas')"
+>
+📝 Como funcionam as tarefas?
+</button>
+
+<button
+onclick="mostrarAjuda('xp')"
+>
+🏆 Como funciona o XP?
+</button>
+
+</div>
+
+
+<div
+id="respostaAjuda"
+class="card"
+style="display:none;margin-top:14px"
+>
+</div>
+
+</section>
+
+</main>
+
+
+<!-- ==================================================
+MENU
+================================================== -->
+
+<nav class="bottom">
+
+<button
+class="active"
+onclick="pagina('inicio',this)"
+>
+<b>⌂</b>
+Início
+</button>
+
+<button
+onclick="pagina('biblioteca',this)"
+>
+<b>▣</b>
+Livros
+</button>
+
+<button
+onclick="pagina('tarefas',this)"
+>
+<b>✓</b>
+Tarefas
+</button>
+
+<button
+onclick="pagina('progresso',this)"
+>
+<b>★</b>
+Progresso
+</button>
+
+<button
+onclick="pagina('perfil',this)"
+>
+<b>●</b>
+Perfil
+</button>
+
+</nav>
+
+</div>
+
+
+<!-- ==================================================
+LEITOR DE PDF
+================================================== -->
+
+<div
+id="pdfReader"
+class="pdfReader"
+>
+
+<div class="pdfHeader">
+
+<button
+class="pdfBack"
+onclick="fecharPDF()"
+>
+← Voltar
+</button>
+
+<div
+id="pdfTitle"
+class="pdfTitle"
+>
+Livro
+</div>
+
+</div>
+
+<div
+id="pdfCarregando"
+class="pdfCarregando"
+>
+
+<div id="pdfCarregandoTexto">
+Carregando PDF...
+</div>
+
+<button
+id="pdfCancelarBtn"
+class="pdfCancelarBtn"
+onclick="fecharPDF()"
+>
+Cancelar
+</button>
+
+</div>
+
+<div
+id="pdfPaginas"
+class="pdfPaginas"
+></div>
+
+<div
+id="pdfNav"
+class="pdfNav"
+style="display:none;"
+>
+
+<button
+onclick="paginaAnteriorPDF()"
+>
+← Anterior
+</button>
+
+<span id="pdfNavTexto">
+Página 1 de 1
+</span>
+
+<button
+onclick="proximaPaginaPDF()"
+>
+Próxima →
+</button>
+
+</div>
+
+<iframe
+id="pdfFrame"
+class="pdfFrame"
+src=""
+style="display:none;"
+>
+</iframe>
+
+</div>
+
+
+<div
+id="toast"
+class="toast"
+>
+</div>
+
+
+<script>
+
+/* ==================================================
+PDF.js — configuração do worker
+================================================== */
+
+if(typeof pdfjsLib!=="undefined"){
+
+pdfjsLib.GlobalWorkerOptions.workerSrc=
+"https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+
+}
+
+
+/* ==================================================
+CONFIGURAÇÃO
+================================================== */
+
+/*
+   BANCO DE DADOS
+
+   COLOQUE A URL DA SUA API AQUI QUANDO TIVER.
+
+   Exemplo:
+
+   DATABASE_URL:
+   "https://seusite.com/api"
+
+   Por enquanto o cadastro funciona
+   usando o armazenamento do aparelho.
+*/
+
+const DATABASE_URL =
+"COLOQUE_A_URL_DO_SEU_BANCO_AQUI";
+
+
+/*
+   RANKING ONLINE (Supabase)
+
+   Pra comparar XP com outras pessoas
+   de verdade, você precisa de um
+   banco de dados gratuito no Supabase.
+
+   Veja o passo a passo completo aqui:
+   https://supabase.com
+
+   Depois de criar o projeto e a
+   tabela "ranking", cole a URL e a
+   chave "anon public" abaixo.
+
+   Enquanto não colocar, o ranking
+   fica desativado (sem quebrar o
+   resto do app).
+*/
+
+const SUPABASE_URL=
+"https://dqsckldxbymipikcgdca.supabase.co";
+
+const SUPABASE_ANON_KEY=
+"sb_publishable_7D8tQo78F2TJxVWXTeTyNw_dTM7kZJm";
+
+/* ==================================================
+ANIMAÇÃO DE ENTRADA (ÓRBITA DO LOGIN)
+================================================== */
+
+(function(){
+
+const satelites=[
+document.getElementById("orbSat0"),
+document.getElementById("orbSat1"),
+document.getElementById("orbSat2")
+];
+
+const raioMax=77;
+let inicio=null;
+
+function loginVisivel(){
+const login=document.getElementById("login");
+return login && login.style.display!=="none";
+}
+
+function quadro(ts){
+
+if(loginVisivel()){
+
+if(!inicio)inicio=ts;
+
+const passado=ts-inicio;
+const crescimento=Math.min(1,passado/900);
+const raio=raioMax*(1-Math.pow(1-crescimento,3));
+
+for(let i=0;i<3;i++){
+
+const fase=i*(Math.PI*2/3);
+const angulo=passado*0.0011+fase;
+
+const x=Math.cos(angulo)*raio;
+const y=Math.sin(angulo)*raio;
+const escala=0.75+((Math.sin(angulo)+1)/2)*0.35;
+
+satelites[i].style.transform=
+"translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0) scale("+escala.toFixed(2)+")";
+
+satelites[i].style.opacity=
+(0.65+escala*0.35).toFixed(2);
+
+}
+
+}else{
+
+inicio=null;
+
+}
+
+requestAnimationFrame(quadro);
+
+}
+
+requestAnimationFrame(quadro);
+
+})();
+
+
+/* ==================================================
+LINKS DOS PDFS
+==================================================
+
+   Aqui você coloca os links.
+
+   Cada série possui suas próprias matérias.
+
+*/
+
+const LIVROS = {
+
+6:{
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-6.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-6.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-6.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-6.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-6.pdf"
+},
+
+7:{
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-7.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-7.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-7.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-7.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-7.pdf"
+},
+
+8:{
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-8.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-8.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-8.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-8.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-8.pdf"
+},
+
+9:{
+Português:"https://github.com/SilasRLk/BoraLer/releases/download/livros/portugues-9.pdf",
+Matemática:"https://github.com/SilasRLk/BoraLer/releases/download/livros/matematica-9.pdf",
+História:"https://github.com/SilasRLk/BoraLer/releases/download/livros/historia-9.pdf",
+Geografia:"https://github.com/SilasRLk/BoraLer/releases/download/livros/geografia-9.pdf",
+Ciências:"https://github.com/SilasRLk/BoraLer/releases/download/livros/ciencias-9.pdf"
+}
+
+};
+
+
+/* ==================================================
+DADOS
+================================================== */
+
+let anoAtual=6;
+
+
+/* ==================================================
+CADASTRO
+================================================== */
+
+async function emailJaFoiUsado(email){
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+/*
+   Sem Supabase configurado, não tem
+   como checar — deixa cadastrar
+   normalmente (só no aparelho).
+*/
+
+return false;
+
+}
+
+try{
+
+const resposta=
+await cliente
+.from("contas_registradas")
+.select("email")
+.eq(
+"email",
+email.toLowerCase()
+)
+.maybeSingle();
+
+if(resposta.error){
+
+throw resposta.error;
+
+}
+
+return !!resposta.data;
+
+}catch(e){
+
+/*
+   Se a checagem falhar (sem
+   internet, etc.), deixa cadastrar
+   — melhor não travar a pessoa por
+   causa de uma instabilidade.
+*/
+
+console.log(
+"Não foi possível checar e-mail:",e
+);
+
+return false;
+
+}
+
+}
+
+
+async function registrarEmailNoServidor(email){
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+return;
+
+}
+
+try{
+
+await cliente
+.from("contas_registradas")
+.insert({
+email:email.toLowerCase()
+});
+
+}catch(e){
+
+console.log(
+"Não foi possível registrar e-mail:",e
+);
+
+}
+
+}
+
+
+async function cadastrar(){
+
+const nome=
+document.getElementById("nomeCadastro")
+.value.trim();
+
+const email=
+document.getElementById("email")
+.value.trim();
+
+const senha=
+document.getElementById("senha")
+.value;
+
+
+if(nome===""||email===""||senha===""){
+
+document.getElementById("msg")
+.innerText=
+"Preencha todos os campos.";
+
+return;
+}
+
+registrarEmailNoServidor(email);
+
+
+/*
+   SALVA NO APARELHO
+
+   Isso permite que o cadastro
+   continue existindo mesmo fechando
+   o aplicativo.
+*/
+
+localStorage.setItem(
+"boraler_nome",
+nome
+);
+
+localStorage.setItem(
+"boraler_email",
+email
+);
+
+localStorage.setItem(
+"boraler_senha",
+senha
+);
+
+localStorage.setItem(
+"boraler_logado",
+"sim"
+);
+
+
+/*
+   FUTURO BANCO
+
+   Quando você colocar uma API,
+   poderá enviar os dados para ela.
+*/
+
+if(
+DATABASE_URL!=="COLOQUE_A_URL_DO_SEU_BANCO_AQUI"
+){
+
+fetch(
+DATABASE_URL+"/cadastro",
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+nome:nome,
+email:email,
+senha:senha
+})
+
+}
+).catch(function(){
+
+console.log(
+"Não foi possível conectar ao banco."
+);
+
+});
+
+}
+
+
+abrirApp();
+
+}
+
+
+/* ==================================================
+LOGIN
+================================================== */
+
+function entrar(){
+
+const email=
+document.getElementById("email")
+.value.trim();
+
+const senha=
+document.getElementById("senha")
+.value;
+
+
+const emailSalvo=
+localStorage.getItem(
+"boraler_email"
+);
+
+const senhaSalva=
+localStorage.getItem(
+"boraler_senha"
+);
+
+
+if(
+email===emailSalvo &&
+senha===senhaSalva
+){
+
+localStorage.setItem(
+"boraler_logado",
+"sim"
+);
+
+abrirApp();
+
+}else{
+
+document.getElementById("msg")
+.innerText=
+"E-mail ou senha incorretos.";
+
+}
+
+}
+
+
+/* ==================================================
+ABRIR APP
+================================================== */
+
+function abrirApp(){
+
+document.getElementById("login")
+.style.display="none";
+
+document.getElementById("app")
+.style.display="block";
+
+
+const nome=
+localStorage.getItem(
+"boraler_nome"
+)||"Estudante";
+
+const email=
+localStorage.getItem(
+"boraler_email"
+)||"";
+
+
+const letra=
+nome.charAt(0)
+.toUpperCase();
+
+
+document.getElementById(
+"nomeHome"
+).innerText=nome;
+
+
+document.getElementById(
+"nomePerfil"
+).innerText=nome;
+
+
+document.getElementById(
+"emailPerfil"
+).innerText=email;
+
+
+document.getElementById(
+"avatarMini"
+).innerText=letra;
+
+
+document.getElementById(
+"avatarGrande"
+).innerText=letra;
+
+
+aplicarAvatar();
+
+
+atualizar();
+
+renderizarTarefas();
+
+carregarAnotacoes();
+
+carregarLivros();
+
+pedirPermissaoNotificacao();
+
+agendarLembrete();
+
+enviarRankingOnline();
+
+}
+
+
+/* ==================================================
+FOTO DE PERFIL
+
+   A foto fica guardada só neste
+   aparelho (localStorage). Uma versão
+   pequena dela também é enviada junto
+   com o ranking, pra aparecer pros
+   outros usuários.
+================================================== */
+
+function aplicarAvatar(){
+
+const foto=
+localStorage.getItem("boraler_foto");
+
+if(!foto){
+
+return;
+
+}
+
+[
+"avatarMini",
+"avatarGrande"
+].forEach(function(id){
+
+const el=
+document.getElementById(id);
+
+el.innerHTML=
+'<img src="'+foto+'">';
+
+});
+
+}
+
+
+function escolherFoto(){
+
+document.getElementById(
+"fotoInput"
+).click();
+
+}
+
+
+function redimensionarImagem(arquivo,tamanhoMax,qualidade){
+
+return new Promise(function(resolve,reject){
+
+const leitor=new FileReader();
+
+leitor.onload=function(e){
+
+const imagem=new Image();
+
+imagem.onload=function(){
+
+let largura=imagem.width;
+
+let altura=imagem.height;
+
+const corte=
+Math.min(largura,altura);
+
+const canvas=
+document.createElement("canvas");
+
+canvas.width=tamanhoMax;
+
+canvas.height=tamanhoMax;
+
+const ctx=
+canvas.getContext("2d");
+
+ctx.drawImage(
+imagem,
+(largura-corte)/2,
+(altura-corte)/2,
+corte,
+corte,
+0,0,tamanhoMax,tamanhoMax
+);
+
+resolve(
+canvas.toDataURL(
+"image/jpeg",qualidade
+)
+);
+
+};
+
+imagem.onerror=reject;
+
+imagem.src=e.target.result;
+
+};
+
+leitor.onerror=reject;
+
+leitor.readAsDataURL(arquivo);
+
+});
+
+}
+
+
+async function fotoSelecionada(input){
+
+const arquivo=
+input.files&&input.files[0];
+
+if(!arquivo){
+
+return;
+
+}
+
+try{
+
+const fotoGrande=
+await redimensionarImagem(
+arquivo,240,0.85
+);
+
+const fotoMini=
+await redimensionarImagem(
+arquivo,48,0.7
+);
+
+localStorage.setItem(
+"boraler_foto",fotoGrande
+);
+
+localStorage.setItem(
+"boraler_foto_mini",fotoMini
+);
+
+aplicarAvatar();
+
+mostrarToast(
+"✓ Foto de perfil atualizada"
+);
+
+enviarRankingOnline();
+
+}catch(e){
+
+console.log(
+"Erro ao processar foto:",e
+);
+
+mostrarToast(
+"Não foi possível usar essa imagem."
+);
+
+}
+
+input.value="";
+
+}
+
+
+/* ==================================================
+TROCAR NOME
+================================================== */
+
+function editarNome(){
+
+const linha=
+document.getElementById(
+"editNomeRow"
+);
+
+const atual=
+localStorage.getItem(
+"boraler_nome"
+)||"";
+
+document.getElementById(
+"novoNomeInput"
+).value=atual;
+
+linha.classList.toggle("on");
+
+}
+
+
+function salvarNome(){
+
+const novoNome=
+document.getElementById(
+"novoNomeInput"
+).value.trim();
+
+if(!novoNome){
+
+mostrarToast(
+"Digite um nome válido."
+);
+
+return;
+
+}
+
+localStorage.setItem(
+"boraler_nome",novoNome
+);
+
+const letra=
+novoNome.charAt(0)
+.toUpperCase();
+
+document.getElementById(
+"nomeHome"
+).innerText=novoNome;
+
+document.getElementById(
+"nomePerfil"
+).innerText=novoNome;
+
+if(!localStorage.getItem(
+"boraler_foto"
+)){
+
+document.getElementById(
+"avatarMini"
+).innerText=letra;
+
+document.getElementById(
+"avatarGrande"
+).innerText=letra;
+
+}
+
+document.getElementById(
+"editNomeRow"
+).classList.remove("on");
+
+mostrarToast(
+"✓ Nome atualizado"
+);
+
+enviarRankingOnline();
+
+}
+
+
+/* ==================================================
+SAIR
+================================================== */
+
+function sair(){
+
+localStorage.removeItem(
+"boraler_logado"
+);
+
+document.getElementById("app")
+.style.display="none";
+
+document.getElementById("login")
+.style.display="flex";
+
+
+const LN=
+pluginNotificacao();
+
+if(LN){
+
+LN.cancel({
+notifications:[{id:1}]
+}).catch(function(){});
+
+}
+
+}
+
+
+/* ==================================================
+NAVEGAÇÃO
+================================================== */
+
+function pagina(nome,botao){
+
+document
+.querySelectorAll(".section")
+.forEach(function(sec){
+
+sec.classList.remove("active");
+
+});
+
+
+const destino=
+document.getElementById(nome);
+
+if(destino){
+
+destino.classList.add("active");
+
+}
+
+
+if(nome==="progresso"){
+
+carregarRankingOnline();
+
+}
+
+
+document
+.querySelectorAll(".bottom button")
+.forEach(function(btn){
+
+btn.classList.remove("active");
+
+});
+
+
+if(botao){
+
+botao.classList.add("active");
+
+}
+
+
+window.scrollTo(0,0);
+
+}
+
+
+/* ==================================================
+MATÉRIA
+================================================== */
+
+function abrirMateria(nome){
+
+pagina("biblioteca");
+
+document.getElementById(
+"pesquisa"
+).value=nome;
+
+pesquisar();
+
+}
+
+
+/* ==================================================
+ANO
+================================================== */
+
+function selecionarAno(ano,botao){
+
+anoAtual=ano;
+
+
+document
+.querySelectorAll(".year")
+.forEach(function(item){
+
+item.classList.remove("active");
+
+});
+
+
+botao.classList.add("active");
+
+
+document.getElementById(
+"tituloSerie"
+).innerHTML=
+"📚 Materiais do "+ano+"º ano";
+
+
+document.getElementById(
+"pesquisa"
+).value="";
+
+
+pesquisar();
+
+carregarLivros();
+
+}
+
+
+/* ==================================================
+CARREGAR LIVROS
+================================================== */
+
+function carregarLivros(){
+
+const materias=[
+"Português",
+"Matemática",
+"História",
+"Geografia",
+"Ciências"
+];
+
+
+const ids=[
+"pdf-portugues",
+"pdf-matematica",
+"pdf-historia",
+"pdf-geografia",
+"pdf-ciencias"
+];
+
+
+for(let i=0;i<materias.length;i++){
+
+const materia=materias[i];
+
+const id=ids[i];
+
+const area=
+document.getElementById(id);
+
+if(!area)continue;
+
+
+const link=
+LIVROS[anoAtual][materia];
+
+
+if(link){
+
+area.innerHTML=
+`
+<a
+class="pdfBtn"
+href="#"
+onclick="abrirPDF('${link.replace(/'/g,"\\'")}','${materia}')"
+>
+📖 Abrir livro do ${anoAtual}º ano
+</a>
+`;
+
+}else{
+
+area.innerHTML=
+`
+<div class="emptyPdf">
+📄 Livro ainda não cadastrado
+</div>
+`;
+
+}
+
+}
+
+}
+
+
+/* ==================================================
+PESQUISA
+================================================== */
+
+function pesquisar(){
+
+const texto=
+document.getElementById(
+"pesquisa"
+).value.toLowerCase();
+
+
+document
+.querySelectorAll(".material")
+.forEach(function(item){
+
+const nome=
+item.getAttribute(
+"data-nome"
+).toLowerCase();
+
+
+if(nome.includes(texto)){
+
+item.style.display="block";
+
+}else{
+
+item.style.display="none";
+
+}
+
+});
+
+}
+
+
+/* ==================================================
+ABRIR PDF DENTRO DO APP
+================================================== */
+
+function idDoLinkDrive(link){
+
+const m=
+link.match(
+/\/d\/([a-zA-Z0-9_-]+)/
+);
+
+return m?m[1]:null;
+
+}
+
+
+function assinaturaEhPDF(buffer){
+
+const cabecalho=
+new Uint8Array(buffer.slice(0,5));
+
+let texto="";
+
+for(let i=0;i<cabecalho.length;i++){
+
+texto+=
+String.fromCharCode(cabecalho[i]);
+
+}
+
+return texto.indexOf("%PDF")===0;
+
+}
+
+
+/* ==================================================
+BAIXAR PDF DO GOOGLE DRIVE
+   (com correção pra arquivos grandes)
+
+   Arquivos grandes do Drive não vêm
+   direto — o Drive manda uma página de
+   aviso ("não foi possível verificar
+   vírus") em vez do PDF. Aqui a gente
+   detecta isso e confirma o download
+   automaticamente.
+================================================== */
+
+async function baixarBytesDoGoogleDrive(idDrive,signal){
+
+async function tentarBaixar(url){
+
+const resposta=
+await fetch(url,{signal:signal});
+
+if(!resposta.ok){
+
+throw new Error(
+"Falha ao baixar (status "+
+resposta.status+")"
+);
+
+}
+
+return await resposta.arrayBuffer();
+
+}
+
+const urlBase=
+"https://drive.google.com/uc?export=download&id="+
+idDrive;
+
+let bytes=
+await tentarBaixar(urlBase);
+
+
+if(!assinaturaEhPDF(bytes)){
+
+/*
+   Não veio um PDF de verdade — deve
+   ser a página de aviso de arquivo
+   grande. Procuramos o código de
+   confirmação escondido nela.
+*/
+
+const decodificador=
+new TextDecoder();
+
+const texto=
+decodificador.decode(
+bytes.slice(0,300000)
+);
+
+const confirmacao=
+texto.match(
+/confirm=([0-9A-Za-z_-]+)/
+);
+
+if(confirmacao){
+
+bytes=await tentarBaixar(
+urlBase+
+"&confirm="+
+confirmacao[1]
+);
+
+}
+
+}
+
+
+if(!assinaturaEhPDF(bytes)){
+
+throw new Error(
+"Não foi possível baixar o PDF (arquivo grande demais ou bloqueado pelo Drive)"
+);
+
+}
+
+return bytes;
+
+}
+
+
+/*
+   Guardamos o documento PDF já aberto
+   e a página atual aqui fora, pra dar
+   pra navegar sem reabrir o arquivo.
+
+   Renderizamos UMA página por vez —
+   isso evita travar o celular com
+   livros grandes (antes gerava todas
+   as páginas de uma vez, o que pesava
+   demais em aparelhos mais fracos).
+*/
+
+let _pdfDocumentoAtual=null;
+
+let _pdfPaginaAtual=1;
+
+let _pdfAbortController=null;
+
+let _pdfCanceladoPeloUsuario=false;
+
+let _pdfSessao=0;
+
+const _downloadsEmAndamento={};
+
+const VERSAO_LIVROS="2";
+
+let _cacheAntigoLimpo=false;
+
+
+function pluginArquivos(){
+
+if(
+typeof Capacitor!=="undefined"&&
+Capacitor.isNativePlatform&&
+Capacitor.isNativePlatform()&&
+Capacitor.Plugins&&
+Capacitor.Plugins.Filesystem
+){
+
+return Capacitor.Plugins.Filesystem;
+
+}
+
+return null;
+
+}
+
+
+function prepararLivroNoAparelho(url,texto){
+
+/*
+   Se o mesmo livro já está sendo baixado
+   (a pessoa saiu e entrou de novo), usa o
+   mesmo download em vez de começar outro.
+*/
+
+if(!_downloadsEmAndamento[url]){
+
+_downloadsEmAndamento[url]=
+prepararLivroNoAparelhoInterno(url,texto)
+.finally(function(){
+
+delete _downloadsEmAndamento[url];
+
+});
+
+}
+
+return _downloadsEmAndamento[url];
+
+}
+
+
+async function prepararLivroNoAparelhoInterno(url,texto){
+
+const FS=pluginArquivos();
+
+const prefixoAtual="livro-v"+VERSAO_LIVROS+"-";
+
+const nome=prefixoAtual+url.split("/").pop();
+
+const dir="CACHE";
+
+if(!_cacheAntigoLimpo){
+_cacheAntigoLimpo=true;
+try{
+const lista=await FS.readdir({path:"",directory:dir});
+const arquivos=(lista&&lista.files)||[];
+for(let i=0;i<arquivos.length;i++){
+const f=arquivos[i];
+const n=(typeof f==="string")?f:f.name;
+if(n&&n.indexOf("livro-")===0&&n.indexOf(prefixoAtual)!==0){
+try{await FS.deleteFile({path:n,directory:dir});}catch(e){}
+}
+}
+}catch(e){}
+}
+
+let existe=false;
+
+try{
+
+const st=
+await FS.stat({path:nome,directory:dir});
+
+existe=!!(st&&st.size>100000);
+
+}catch(e){}
+
+if(!existe){
+
+const tmp=nome+".tmp";
+
+try{
+await FS.deleteFile({path:tmp,directory:dir});
+}catch(e){}
+
+let ouvinte=null;
+
+try{
+
+ouvinte=
+await FS.addListener(
+"progress",
+function(ev){
+
+if(!ev){return;}
+
+if(ev.contentLength>0){
+
+texto.innerText=
+"Abrindo o livro... "+
+Math.round(ev.bytes*100/ev.contentLength)+
+"%\nLivros grandes podem levar alguns minutos.";
+
+}else if(ev.bytes){
+
+texto.innerText=
+"Abrindo o livro... "+
+Math.round(ev.bytes/1048576)+
+" MB\nLivros grandes podem levar alguns minutos.";
+
+}
+
+});
+
+}catch(e){}
+
+try{
+
+await FS.downloadFile({
+url:url,
+path:tmp,
+directory:dir,
+recursive:true,
+progress:true
+});
+
+}finally{
+
+if(ouvinte&&ouvinte.remove){
+ouvinte.remove();
+}
+
+}
+
+try{
+await FS.deleteFile({path:nome,directory:dir});
+}catch(e){}
+
+await FS.rename({
+from:tmp,
+to:nome,
+directory:dir,
+toDirectory:dir
+});
+
+}
+
+const r=
+await FS.getUri({path:nome,directory:dir});
+
+return Capacitor.convertFileSrc(r.uri);
+
+}
+
+
+async function abrirPDF(link,materia){
+
+const minhaSessao=++_pdfSessao;
+
+if(!link){
+
+mostrarToast(
+"PDF não cadastrado."
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"pdfTitle"
+).innerHTML=
+"📖 "+materia+" • "+anoAtual+"º ano";
+
+
+document.getElementById(
+"pdfReader"
+).style.display="block";
+
+document.body.style.overflow="hidden";
+
+
+const areaPaginas=
+document.getElementById("pdfPaginas");
+
+const carregando=
+document.getElementById("pdfCarregando");
+
+const carregandoTexto=
+document.getElementById("pdfCarregandoTexto");
+
+document.getElementById("pdfCancelarBtn").innerText="Cancelar";
+
+const frame=
+document.getElementById("pdfFrame");
+
+const nav=
+document.getElementById("pdfNav");
+
+areaPaginas.innerHTML="";
+
+areaPaginas.style.display="none";
+
+nav.style.display="none";
+
+frame.style.display="none";
+
+frame.src="";
+
+carregando.style.display="flex";
+
+carregandoTexto.innerText=
+"Abrindo...";
+
+
+_pdfDocumentoAtual=null;
+
+_pdfPaginaAtual=1;
+
+_pdfCanceladoPeloUsuario=false;
+
+
+/*
+   Plano B: se o PDF.js falhar por
+   qualquer motivo (arquivo corrompido,
+   link inválido, etc.), mostramos o
+   link dentro do iframe como antes, em
+   vez de deixar a tela em branco.
+*/
+
+function usarPlanoB(linkFallback,mensagem){
+
+carregando.style.display="none";
+
+if(mensagem){
+
+mostrarToast(mensagem);
+
+}
+
+frame.style.display="block";
+
+frame.src=linkFallback;
+
+}
+
+
+const ehLinkRemoto=
+link.indexOf("http")===0;
+
+
+try{
+
+let bytes;
+
+let urlLocal=null;
+
+
+if(ehLinkRemoto){
+
+/*
+   Só entra aqui se um livro ainda
+   estiver usando link do Google Drive
+   (por exemplo, um adicionado no
+   futuro antes de ser comprimido e
+   colocado dentro do app). Os 20
+   livros padrão já são arquivos
+   locais e não passam por aqui.
+*/
+
+const ehDrive=
+link.indexOf("drive.google.com")>=0;
+
+const idDrive=
+ehDrive?idDoLinkDrive(link):null;
+
+if(ehDrive&&!idDrive){
+
+usarPlanoB(link);
+
+return;
+
+}
+
+if(!ehDrive&&pluginArquivos()){
+
+carregandoTexto.innerText=
+"Abrindo o livro...\nLivros grandes podem levar alguns minutos.";
+
+urlLocal=
+await prepararLivroNoAparelho(
+link,
+carregandoTexto
+);
+
+if(minhaSessao!==_pdfSessao){
+
+return;
+
+}
+
+}else{
+
+carregandoTexto.innerText=
+"Abrindo o livro...\nLivros grandes podem levar alguns minutos.";
+
+_pdfAbortController=
+new AbortController();
+
+const tempoLimite=
+setTimeout(function(){
+
+_pdfAbortController.abort();
+
+},180000);
+
+try{
+
+if(ehDrive){
+
+bytes=
+await baixarBytesDoGoogleDrive(
+idDrive,
+_pdfAbortController.signal
+);
+
+}else{
+
+const resposta=
+await fetch(
+link,
+{signal:_pdfAbortController.signal}
+);
+
+if(!resposta.ok){
+
+throw new Error(
+"Falha ao baixar (status "+
+resposta.status+")"
+);
+
+}
+
+bytes=
+await resposta.arrayBuffer();
+
+if(!assinaturaEhPDF(bytes)){
+
+throw new Error(
+"O arquivo baixado nao e um PDF"
+);
+
+}
+
+}
+
+}finally{
+
+clearTimeout(tempoLimite);
+
+}
+
+}
+
+carregandoTexto.innerText=
+"Processando o livro...";
+
+}
+
+
+/*
+   Arquivo local (o caso normal): o
+   PDF.js abre ele direto do próprio
+   app, sem internet, instantâneo.
+*/
+
+if(minhaSessao!==_pdfSessao){
+
+return;
+
+}
+
+const documento=
+urlLocal?
+await pdfjsLib.getDocument({url:urlLocal}).promise:
+ehLinkRemoto?
+await pdfjsLib.getDocument({data:bytes}).promise:
+await pdfjsLib.getDocument(link).promise;
+
+if(minhaSessao!==_pdfSessao){
+
+return;
+
+}
+
+_pdfDocumentoAtual=documento;
+
+_pdfPaginaAtual=1;
+
+carregando.style.display="none";
+
+areaPaginas.style.display="block";
+
+nav.style.display=
+documento.numPages>1?
+"flex":"none";
+
+await renderizarPaginaPDF();
+
+
+}catch(e){
+
+_pdfAbortController=null;
+
+
+if(minhaSessao!==_pdfSessao){
+
+/*
+   A pessoa mesma cancelou — a tela já
+   foi fechada pelo fecharPDF(), então
+   não fazemos nada aqui.
+*/
+
+return;
+
+}
+
+
+console.log(
+"Não foi possível abrir o PDF:",e
+);
+
+try{
+
+if(urlLocal&&pluginArquivos()){
+
+pluginArquivos().deleteFile({
+path:"livro-v"+VERSAO_LIVROS+"-"+link.split("/").pop(),
+directory:"CACHE"
+});
+
+}
+
+}catch(e2){}
+
+/*
+   Mostra o motivo real na tela (em vez
+   de uma mensagem genérica), pra gente
+   saber exatamente o que aconteceu.
+*/
+
+let detalhe="";
+
+try{
+
+detalhe=
+(e&&e.message)?e.message:String(e);
+
+}catch(e3){}
+
+carregando.style.display="flex";
+
+carregandoTexto.innerText=
+"Não foi possível abrir este livro.\n"+
+"Motivo: "+detalhe;
+
+document.getElementById(
+"pdfCancelarBtn"
+).innerText="Voltar";
+
+}
+
+}
+
+
+async function renderizarPaginaPDF(){
+
+if(!_pdfDocumentoAtual){
+
+return;
+
+}
+
+const areaPaginas=
+document.getElementById("pdfPaginas");
+
+areaPaginas.innerHTML="";
+
+areaPaginas.scrollTop=0;
+
+
+const pagina=
+await _pdfDocumentoAtual.getPage(
+_pdfPaginaAtual
+);
+
+const larguraDisponivel=
+areaPaginas.clientWidth-20;
+
+const dpr=
+window.devicePixelRatio||1;
+
+const viewportBase=
+pagina.getViewport({scale:1});
+
+const escala=
+larguraDisponivel/viewportBase.width;
+
+const viewport=
+pagina.getViewport({
+scale:escala*dpr
+});
+
+const canvas=
+document.createElement("canvas");
+
+canvas.width=
+viewport.width;
+
+canvas.height=
+viewport.height;
+
+canvas.style.width=
+(viewport.width/dpr)+"px";
+
+canvas.style.height=
+(viewport.height/dpr)+"px";
+
+areaPaginas.appendChild(canvas);
+
+await pagina.render({
+canvasContext:
+canvas.getContext("2d"),
+viewport:viewport
+}).promise;
+
+
+document.getElementById(
+"pdfNavTexto"
+).innerText=
+"Página "+
+_pdfPaginaAtual+
+" de "+
+_pdfDocumentoAtual.numPages;
+
+
+const botoes=
+document.querySelectorAll(
+"#pdfNav button"
+);
+
+botoes[0].disabled=
+_pdfPaginaAtual<=1;
+
+botoes[1].disabled=
+_pdfPaginaAtual>=
+_pdfDocumentoAtual.numPages;
+
+}
+
+
+function paginaAnteriorPDF(){
+
+if(_pdfPaginaAtual>1){
+
+_pdfPaginaAtual--;
+
+renderizarPaginaPDF();
+
+}
+
+}
+
+
+function proximaPaginaPDF(){
+
+if(
+_pdfDocumentoAtual&&
+_pdfPaginaAtual<_pdfDocumentoAtual.numPages
+){
+
+_pdfPaginaAtual++;
+
+renderizarPaginaPDF();
+
+}
+
+}
+
+
+/* ==================================================
+FECHAR PDF
+================================================== */
+
+function fecharPDF(){
+
+_pdfSessao++;
+
+_pdfCanceladoPeloUsuario=true;
+
+if(_pdfAbortController){
+
+_pdfCanceladoPeloUsuario=true;
+
+_pdfAbortController.abort();
+
+}
+
+
+document.getElementById(
+"pdfFrame"
+).src="";
+
+document.getElementById(
+"pdfPaginas"
+).innerHTML="";
+
+document.getElementById(
+"pdfReader"
+).style.display="none";
+
+
+document.body.style.overflow="";
+
+}
+
+
+/* ==================================================
+TAREFAS (lista dinâmica, criada pela pessoa)
+================================================== */
+
+/*
+   ANTI-TRAPAÇA
+
+   A pessoa só consegue marcar uma
+   tarefa como concluída depois de
+   esperar esse tempo mínimo desde
+   que a criou. Evita criar e marcar
+   como feita na mesma hora só pra
+   ganhar XP.
+
+   Para mudar, troque o número
+   abaixo (em minutos).
+*/
+
+const MINUTOS_ANTES_DE_CONCLUIR=10;
+
+
+function carregarListaTarefas(){
+
+try{
+
+return JSON.parse(
+localStorage.getItem("boraler_lista_tarefas")
+)||[];
+
+}catch(e){
+
+return [];
+
+}
+
+}
+
+
+function salvarListaTarefas(lista){
+
+localStorage.setItem(
+"boraler_lista_tarefas",
+JSON.stringify(lista)
+);
+
+}
+
+
+function adicionarTarefaNova(origem){
+
+const idInput=
+origem==="progresso"?
+"novaTarefaInputProgresso":
+"novaTarefaInput";
+
+const input=
+document.getElementById(idInput);
+
+const texto=
+input.value.trim();
+
+if(!texto){
+
+return;
+
+}
+
+const lista=
+carregarListaTarefas();
+
+lista.push({
+id:Date.now(),
+texto:texto,
+feita:false,
+criadoEm:Date.now()
+});
+
+salvarListaTarefas(lista);
+
+input.value="";
+
+renderizarTarefas();
+
+atualizar();
+
+agendarLembrete();
+
+}
+
+
+function alternarTarefa(id){
+
+const lista=
+carregarListaTarefas();
+
+const item=
+lista.find(function(t){
+return t.id===id;
+});
+
+if(!item){
+
+return;
+
+}
+
+
+const vaiConcluir=
+!item.feita;
+
+if(vaiConcluir){
+
+const criadoEm=
+item.criadoEm||0;
+
+const passouMs=
+Date.now()-criadoEm;
+
+const minimoMs=
+MINUTOS_ANTES_DE_CONCLUIR*60*1000;
+
+if(passouMs<minimoMs){
+
+mostrarToast(
+"⏳ Espere um pouco antes de marcar como concluída"
+);
+
+renderizarTarefas();
+
+return;
+
+}
+
+}
+
+
+item.feita=!item.feita;
+
+salvarListaTarefas(lista);
+
+
+if(item.feita){
+
+mostrarToast(
+"✓ Tarefa concluída • +20 XP"
+);
+
+agendarLembrete();
+
+enviarRankingOnline();
+
+}
+
+
+renderizarTarefas();
+
+atualizar();
+
+}
+
+
+function removerTarefa(id){
+
+const lista=
+carregarListaTarefas()
+.filter(function(t){
+return t.id!==id;
+});
+
+salvarListaTarefas(lista);
+
+renderizarTarefas();
+
+atualizar();
+
+agendarLembrete();
+
+}
+
+
+function criarLinhaTarefa(item){
+
+const linha=
+document.createElement("div");
+
+linha.className=
+"material task";
+
+const caixa=
+document.createElement("input");
+
+caixa.type="checkbox";
+
+caixa.checked=
+item.feita;
+
+caixa.onchange=function(){
+
+alternarTarefa(item.id);
+
+};
+
+const texto=
+document.createElement("div");
+
+texto.className=
+"taskText"+
+(item.feita?" done":"");
+
+const tituloTarefa=
+document.createElement("h3");
+
+tituloTarefa.textContent=
+item.texto;
+
+texto.appendChild(
+tituloTarefa
+);
+
+const excluir=
+document.createElement("button");
+
+excluir.className=
+"taskDelete";
+
+excluir.innerHTML=
+"✕";
+
+excluir.onclick=function(){
+
+removerTarefa(item.id);
+
+};
+
+linha.appendChild(caixa);
+
+linha.appendChild(texto);
+
+linha.appendChild(excluir);
+
+return linha;
+
+}
+
+
+function renderizarTarefas(){
+
+const lista=
+carregarListaTarefas();
+
+[
+"listaTarefas",
+"listaTarefasProgresso"
+].forEach(function(idContainer){
+
+const container=
+document.getElementById(idContainer);
+
+if(!container){
+
+return;
+
+}
+
+container.innerHTML="";
+
+if(lista.length===0){
+
+const vazio=
+document.createElement("div");
+
+vazio.className=
+"taskEmpty";
+
+vazio.innerText=
+"Nenhuma tarefa ainda. Adicione a primeira acima!";
+
+container.appendChild(vazio);
+
+return;
+
+}
+
+lista.forEach(function(item){
+
+container.appendChild(
+criarLinhaTarefa(item)
+);
+
+});
+
+});
+
+}
+
+
+/* ==================================================
+ANOTAÇÕES (Progresso)
+================================================== */
+
+function carregarAnotacoes(){
+
+const area=
+document.getElementById("anotacoesArea");
+
+if(!area){
+
+return;
+
+}
+
+area.value=
+localStorage.getItem("boraler_anotacoes")||"";
+
+}
+
+
+let _anotacoesTimeout=null;
+
+function salvarAnotacoes(){
+
+const area=
+document.getElementById("anotacoesArea");
+
+localStorage.setItem(
+"boraler_anotacoes",
+area.value
+);
+
+
+const aviso=
+document.getElementById("anotacoesSalvo");
+
+if(_anotacoesTimeout){
+
+clearTimeout(_anotacoesTimeout);
+
+}
+
+aviso.innerText=
+"Salvo ✓";
+
+_anotacoesTimeout=
+setTimeout(function(){
+
+aviso.innerText="";
+
+},1500);
+
+}
+
+
+/* ==================================================
+LEMBRETE (notificação local)
+
+   Avisa a pessoa depois de X horas
+   sem concluir nenhuma tarefa.
+
+   Para mudar o tempo, troque o
+   número abaixo (em horas).
+================================================== */
+
+const HORAS_LEMBRETE=3;
+
+
+function pluginNotificacao(){
+
+if(
+typeof Capacitor!=="undefined"&&
+Capacitor.isNativePlatform&&
+Capacitor.isNativePlatform()&&
+Capacitor.Plugins&&
+Capacitor.Plugins.LocalNotifications
+){
+
+return Capacitor.Plugins.LocalNotifications;
+
+}
+
+return null;
+
+}
+
+
+async function pedirPermissaoNotificacao(){
+
+const LN=
+pluginNotificacao();
+
+if(!LN){
+
+return;
+
+}
+
+try{
+
+await LN.requestPermissions();
+
+}catch(e){
+
+console.log(
+"Permissão de notificação:",e
+);
+
+}
+
+}
+
+
+async function agendarLembrete(){
+
+const LN=
+pluginNotificacao();
+
+if(!LN){
+
+return;
+
+}
+
+try{
+
+await LN.cancel({
+notifications:[{id:1}]
+});
+
+const pendentes=
+carregarListaTarefas().filter(
+function(t){
+return !t.feita;
+});
+
+if(pendentes.length===0){
+
+return;
+
+}
+
+pendentes.sort(function(x,y){
+return (x.criadoEm||0)-(y.criadoEm||0);
+});
+
+const maisAntiga=
+pendentes[0];
+
+const intervalo=
+HORAS_LEMBRETE*60*60*1000;
+
+let quando=
+(maisAntiga.criadoEm||Date.now())+
+intervalo;
+
+if(quando<=Date.now()+60000){
+
+quando=Date.now()+intervalo;
+
+}
+
+await LN.schedule({
+notifications:[{
+id:1,
+title:"Hora de estudar! 📚",
+body:"Você ainda não concluiu: "+
+maisAntiga.texto,
+smallIcon:"ic_stat_boraler",
+iconColor:"#f5c542",
+schedule:{at:new Date(quando)}
+}]
+});
+
+}catch(e){
+
+console.log(
+"Erro ao agendar lembrete:",e
+);
+
+}
+
+}
+
+
+/* ==================================================
+RANKING ONLINE (Supabase)
+================================================== */
+
+function supabaseConfigurado(){
+
+return (
+SUPABASE_URL.indexOf("COLOQUE_")!==0&&
+SUPABASE_ANON_KEY.indexOf("COLOQUE_")!==0&&
+typeof supabase!=="undefined"
+);
+
+}
+
+
+let _clienteSupabase=null;
+
+function clienteSupabase(){
+
+if(!supabaseConfigurado()){
+
+return null;
+
+}
+
+if(!_clienteSupabase){
+
+_clienteSupabase=
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+}
+
+return _clienteSupabase;
+
+}
+
+
+function idDispositivo(){
+
+let id=
+localStorage.getItem(
+"boraler_device_id"
+);
+
+if(!id){
+
+id=
+(crypto.randomUUID?
+crypto.randomUUID():
+"id-"+Date.now()+"-"+
+Math.random().toString(36).slice(2));
+
+localStorage.setItem(
+"boraler_device_id",
+id
+);
+
+}
+
+return id;
+
+}
+
+
+async function enviarRankingOnline(){
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+return;
+
+}
+
+const lista=
+carregarListaTarefas();
+
+const xp=
+lista.filter(function(t){
+return t.feita;
+}).length*20;
+
+const nome=
+localStorage.getItem(
+"boraler_nome"
+)||"Estudante";
+
+const foto=
+localStorage.getItem(
+"boraler_foto_mini"
+)||null;
+
+try{
+
+await cliente
+.from("ranking")
+.upsert({
+id:idDispositivo(),
+nome:nome,
+xp:xp,
+foto:foto,
+atualizado_em:
+new Date().toISOString()
+});
+
+}catch(e){
+
+console.log(
+"Erro ao enviar ranking:",
+(e&&(e.message||e.details))||e
+);
+
+}
+
+}
+
+
+async function carregarRankingOnline(){
+
+const painel=
+document.getElementById(
+"rankingLista"
+);
+
+if(!painel){
+
+return;
+
+}
+
+const cliente=
+clienteSupabase();
+
+if(!cliente){
+
+painel.innerHTML=
+'<p class="taskEmpty">'+
+"Ranking desativado. Configure o Supabase no código (SUPABASE_URL e SUPABASE_ANON_KEY) pra ativar."+
+"</p>";
+
+return;
+
+}
+
+painel.innerHTML=
+'<p class="taskEmpty">Carregando ranking...</p>';
+
+try{
+
+const resposta=
+await cliente
+.from("ranking")
+.select("id,nome,xp,foto")
+.order("xp",{ascending:false})
+.limit(20);
+
+if(resposta.error){
+
+throw resposta.error;
+
+}
+
+const linhas=
+resposta.data||[];
+
+if(linhas.length===0){
+
+painel.innerHTML=
+'<p class="taskEmpty">Ninguém no ranking ainda. Complete uma tarefa pra aparecer aqui!</p>';
+
+return;
+
+}
+
+const meuId=
+idDispositivo();
+
+const medalhas=
+["🥇","🥈","🥉"];
+
+painel.innerHTML="";
+
+linhas.forEach(function(linha,indice){
+
+const eu=
+linha.id===meuId;
+
+const posicao=
+document.createElement("div");
+
+posicao.className=
+"rankRow"+
+(eu?" rankMe":"");
+
+const posicaoTexto=
+medalhas[indice]||
+(indice+1)+"º";
+
+const fotoHtml=
+linha.foto?
+'<img class="rankFoto" src="'+linha.foto+'">':
+'<div class="rankFotoLetra">'+
+(linha.nome||"?").charAt(0).toUpperCase()+
+"</div>";
+
+posicao.innerHTML=
+'<span class="rankPos">'+
+posicaoTexto+
+"</span>"+
+fotoHtml+
+'<span class="rankNome"></span>'+
+'<span class="rankXp">'+
+linha.xp+
+" XP</span>";
+
+posicao.querySelector(
+".rankNome"
+).textContent=
+linha.nome+
+(eu?" (você)":"");
+
+painel.appendChild(posicao);
+
+});
+
+}catch(e){
+
+const detalhe=
+(e&&(e.message||e.error_description||e.details))||
+"erro desconhecido";
+
+painel.innerHTML=
+'<p class="taskEmpty">Não deu pra carregar o ranking agora.<br><br>Detalhe: '+
+detalhe+
+"</p>"+
+'<button class="rankRetryBtn" onclick="carregarRankingOnline()">Tentar de novo</button>';
+
+console.log(
+"Erro ao carregar ranking:",
+detalhe,
+e
+);
+
+}
+
+}
+
+
+/* ==================================================
+ATUALIZAR PROGRESSO
+================================================== */
+
+function atualizar(){
+
+const lista=
+carregarListaTarefas();
+
+const total=
+lista.length;
+
+const tarefas=
+lista.filter(function(t){
+return t.feita;
+}).length;
+
+
+const xp=
+tarefas*20;
+
+
+const porcentagem=
+total>0?
+Math.round((tarefas/total)*100):
+0;
+
+
+const nivel=
+Math.floor(xp/100)+1;
+
+
+const xpNivel=
+xp%100;
+
+
+/* HOME */
+
+document.getElementById(
+"statTarefas"
+).innerText=tarefas;
+
+
+document.getElementById(
+"statXp"
+).innerText=xp;
+
+
+document.getElementById(
+"barraHome"
+).style.width=
+porcentagem+"%";
+
+
+document.getElementById(
+"textoHome"
+).innerText=
+porcentagem+
+"% concluído";
+
+
+/* TAREFAS */
+
+document.getElementById(
+"barraTarefas"
+).style.width=
+porcentagem+"%";
+
+
+document.getElementById(
+"textoTarefas"
+).innerText=
+tarefas+
+" de "+
+total+
+" concluídas";
+
+
+/* PROGRESSO */
+
+document.getElementById(
+"progTarefas"
+).innerText=tarefas;
+
+
+document.getElementById(
+"progPercent"
+).innerText=
+porcentagem+"%";
+
+
+document.getElementById(
+"progXp"
+).innerText=xp;
+
+
+document.getElementById(
+"nivel"
+).innerText=nivel;
+
+
+document.getElementById(
+"xpTexto"
+).innerText=
+xpNivel+
+" / 100 XP";
+
+
+document.getElementById(
+"barraXp"
+).style.width=
+xpNivel+"%";
+
+
+/* PERFIL */
+
+document.getElementById(
+"perfilTarefas"
+).innerText=tarefas;
+
+
+document.getElementById(
+"perfilXp"
+).innerText=xp;
+
+
+document.getElementById(
+"perfilNivel"
+).innerText=nivel;
+
+}
+
+
+/* ==================================================
+AJUDA
+================================================== */
+
+function mostrarAjuda(tipo){
+
+const area=
+document.getElementById(
+"respostaAjuda"
+);
+
+
+area.style.display="block";
+
+
+if(tipo==="livros"){
+
+area.innerHTML=
+`
+<h3>📚 Biblioteca</h3>
+<p class="muted">
+Entre em Livros, escolha o 6º, 7º, 8º ou 9º ano e depois selecione a matéria.
+</p>
+`;
+
+}
+
+
+if(tipo==="pdf"){
+
+area.innerHTML=
+`
+<h3>📄 Livros</h3>
+<p class="muted">
+Ao tocar em "Abrir livro", o PDF será carregado dentro do próprio Boraler.
+</p>
+`;
+
+}
+
+
+if(tipo==="tarefas"){
+
+area.innerHTML=
+`
+<h3>📝 Tarefas</h3>
+<p class="muted">
+Marque uma tarefa quando terminar. Cada atividade concluída dá 20 XP.
+</p>
+`;
+
+}
+
+
+if(tipo==="xp"){
+
+area.innerHTML=
+`
+<h3>🏆 XP</h3>
+<p class="muted">
+Seu XP aumenta conforme você completa tarefas e ajuda a subir de nível.
+</p>
+`;
+
+}
+
+}
+
+
+/* ==================================================
+TOAST
+================================================== */
+
+function mostrarToast(texto){
+
+const toast=
+document.getElementById("toast");
+
+
+toast.innerHTML=texto;
+
+toast.style.display="block";
+
+
+setTimeout(function(){
+
+toast.style.display="none";
+
+},1800);
+
+}
+
+
+/* ==================================================
+INICIAR
+================================================== */
+
+window.onload=function(){
+
+if(
+localStorage.getItem(
+"boraler_logado"
+)==="sim"
+){
+
+abrirApp();
+
+}
+
+};
+
+</script>
+
+</body>
+</html>
